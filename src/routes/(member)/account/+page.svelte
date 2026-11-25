@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PRICES } from '#lib/pricing.ts';
 	import { getAccount, updateName } from '#lib/remote/account.remote.ts';
 
 	const account = $derived(await getAccount());
@@ -16,13 +17,13 @@
 				<div class="flex flex-wrap items-center justify-between gap-3">
 					<div>
 						<p class="font-display text-lg font-bold text-forest">Essência Family, {m.plan}</p>
-						{#if renews}<p class="text-[0.85rem] opacity-70">Renews on {renews} · {m.plan === 'yearly' ? '€120' : '€12'}</p>{/if}
+						{#if renews}<p class="text-[0.85rem] opacity-70">Renews on {renews} · €{m.plan === 'yearly' ? PRICES.yearly : PRICES.monthly}</p>{/if}
 					</div>
 					<span class="chip">{m.status.replace('_', ' ')}</span>
 				</div>
 			{:else}
 				<!-- shortcut: billing buttons appear once payments are connected. -->
-				<p class="font-display text-lg font-bold text-forest">Founding member</p>
+				<p class="font-display text-lg font-bold text-forest">Remember member</p>
 				<p class="text-[0.85rem] opacity-70">Payments are not set up yet, so your access is free for now.</p>
 			{/if}
 		</div>

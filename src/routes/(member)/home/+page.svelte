@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { ART, gradient } from '#lib/content.ts';
+	import { ART, formatSession, gradient } from '#lib/content.ts';
 	import { formatDay } from '#lib/moon.ts';
 	import CourseCard from '#lib/components/CourseCard.svelte';
 	import PlayIcon from '#lib/components/PlayIcon.svelte';
 	import PracticeCard from '#lib/components/PracticeCard.svelte';
-	import { getCircles } from '#lib/remote/community.remote.ts';
+	import { getCircles, getLiveSessions } from '#lib/remote/community.remote.ts';
 	import { getCourses, getPractices } from '#lib/remote/content.remote.ts';
 
-	const [practices, courses, circles] = $derived(await Promise.all([getPractices(), getCourses(), getCircles()]));
+	const [practices, courses, circles, live] = $derived(
+		await Promise.all([getPractices(), getCourses(), getCircles(), getLiveSessions()])
+	);
+	const nextLive = $derived(live.upcoming[0]);
 	const latest = $derived(practices[0]);
 	const art = $derived(ART[latest?.type] ?? ART.Yoga);
 	// Courses already started come first.
@@ -34,20 +37,31 @@
 			</a>
 		{/if}
 
-		<a href="/community" class="card mt-6 flex items-center gap-4 rounded-2xl border border-moss/20 bg-white/50 p-4">
+		<div class="mt-6 grid gap-4 md:grid-cols-2">
+		{#if nextLive}
+			<a href="/live/{nextLive.id}" class="card flex items-center gap-4 rounded-2xl border border-moss/20 bg-white/50 p-4">
+				<span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-forest text-stone"><PlayIcon /></span>
+				<span>
+					<span class="block font-display text-[0.62rem] font-bold tracking-[0.16em] text-moss uppercase">Next live session</span>
+					<span class="font-display text-lg text-forest">{formatSession(nextLive.starts_at)}</span>
+				</span>
+			</a>
+		{/if}
+		<a href="/community" class="card flex items-center gap-4 rounded-2xl border border-moss/20 bg-white/50 p-4">
 			<span
 				class="h-11 w-11 shrink-0 rounded-full border border-moss/30"
 				style="background:radial-gradient(circle at 65% 35%,#3A4B39 55%,#E9E4D3 56%)"
 			></span>
 			<span>
-				<span class="block font-display text-[0.62rem] font-bold tracking-[0.16em] text-moss uppercase">Next sharing circle</span>
-				<span class="font-display text-lg text-forest">{formatDay(circles.next)}</span>
+				<span class="block font-display text-[0.62rem] font-bold tracking-[0.16em] text-moss uppercase">New moon check-in</span>
+				<span class="font-display text-lg text-forest">{formatDay(circles.next)}{circles.theme ? ` · ${circles.theme.theme}` : ''}</span>
 			</span>
 		</a>
+		</div>
 
 		<div class="mt-14 mb-5 flex items-end justify-between">
 			<h2 class="h2 text-2xl">Continue learning</h2>
-			<a href="/courses" class="text-[0.85rem] text-terra underline">All courses</a>
+			<a href="/courses" class="text-[0.85rem] text-terra underline">All intro classes</a>
 		</div>
 		<div class="grid gap-4 md:grid-cols-2">
 			{#each continuing as course (course.slug)}<CourseCard {course} />{/each}

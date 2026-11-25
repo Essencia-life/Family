@@ -38,7 +38,8 @@
 					<p class="mt-3 opacity-70">Lessons are on their way.</p>
 				{/if}
 			</div>
-			<aside class="price self-start p-3!">
+			<aside class="flex flex-col gap-4 self-start">
+			<div class="price p-3!">
 				<p class="px-2 py-2 font-display font-bold text-forest">{course.lessons.length} lessons · {course.duration}</p>
 				<div class="track mx-2 mb-2"><div class="fill" style="width:{pct}%"></div></div>
 				{#each course.lessons as l, i (l.id)}
@@ -46,6 +47,16 @@
 						<span class="tick" class:done={l.done}>✓</span><span>{i + 1}. {l.title}</span>
 					</a>
 				{/each}
+			</div>
+			{#if course.creator_url}
+				<div class="price p-5!">
+					<p class="font-display font-bold text-forest">Want to go deeper?</p>
+					<p class="mt-1 mb-3 text-[0.82rem] opacity-70">
+						{course.creator ?? 'The creator'} offers the full course on their own website.
+					</p>
+					<a href={course.creator_url} class="pill-btn bg-amber py-2! text-brown" target="_blank" rel="noopener">Full course &nearr;</a>
+				</div>
+			{/if}
 			</aside>
 		</div>
 	</div>
