@@ -10,7 +10,7 @@ const PRACTICE = 'week, type, title, teacher, minutes, description, video_provid
 export const getPreview = query(async () => {
 	const [practices, courses] = await Promise.all([
 		db.from('practices').select('week, type, title, teacher, minutes').order('week', { ascending: false }).limit(4),
-		db.from('courses').select('slug, title, duration, colors, lessons(count)').order('position')
+		db.from('courses').select('slug, title, duration, colors, creator, lessons(count)').order('position')
 	]);
 	return {
 		practices: must(practices),
@@ -38,7 +38,7 @@ export const getPractice = query(v.pipe(v.number(), v.integer()), async (week) =
 export const getCourses = query(async () => {
 	const member = await requireMember();
 	const [courses, progress] = await Promise.all([
-		db.from('courses').select('slug, title, blurb, level, duration, colors, lessons(id)').order('position'),
+		db.from('courses').select('slug, title, blurb, level, duration, colors, creator, lessons(id)').order('position'),
 		db.from('lesson_progress').select('lesson_id').eq('user_id', member.id)
 	]);
 	const done = new Set(must(progress).map((p) => p.lesson_id));
@@ -54,7 +54,7 @@ export const getCourse = query(v.string(), async (slug) => {
 	const course = must(
 		await db
 			.from('courses')
-			.select('slug, title, blurb, level, duration, colors, lessons(id, position, title, body, video_provider, video_id)')
+			.select('slug, title, blurb, level, duration, colors, creator, creator_url, lessons(id, position, title, body, video_provider, video_id)')
 			.eq('slug', slug)
 			.order('position', { referencedTable: 'lessons' })
 			.maybeSingle()

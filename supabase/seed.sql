@@ -49,3 +49,23 @@ insert into public.threads (id, category, title, body, author_id, author_name, c
 insert into public.replies (thread_id, author_id, author_name, body) values
   ('10000000-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000002', 'Tomás', 'Field beans and phacelia did well for us. Chop and drop in spring.'),
   ('10000000-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000005', 'Mara', 'The first five minutes and the final rest. That is the heart of it.');
+
+-- Membership plan (20 Nov 2026). Placeholder creators, links and themes to replace.
+update public.courses set creator = 'Essência', creator_url = 'https://essencia.life' where creator is null;
+
+-- Guess: Monday and Thursday at 08:00 Lisbon time, the morning practice streamed live.
+-- Four weeks ahead and two weeks back from the day the seed runs; past ones show as recordings.
+insert into public.live_sessions (title, host, starts_at, minutes, description)
+select
+  case extract(isodow from d) when 1 then 'Monday morning practice' else 'Thursday morning practice' end,
+  case extract(isodow from d) when 1 then 'Mara' else 'Juno' end,
+  (d + time '08:00') at time zone 'Europe/Lisbon',
+  45,
+  'Live from the land at Essência. Join from wherever you are, camera on or off.'
+from generate_series(current_date - 14, current_date + 28, interval '1 day') as g(d)
+where extract(isodow from d) in (1, 4);
+
+insert into public.moon_themes (circle_on, theme, invitation) values
+  ('2026-12-09', 'Remembering', 'What did you remember about yourself this month? Bring one moment to share.'),
+  ('2027-01-07', 'Seeds', 'Which intention do you want to plant for the year ahead?'),
+  ('2027-02-06', 'Blossoming', 'Where do you feel something opening in you?');

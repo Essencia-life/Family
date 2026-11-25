@@ -16,6 +16,10 @@ Built with SvelteKit 3 (remote functions), Auth.js and Supabase.
 - **Data**: every read and write is a remote function in `src/lib/remote/*.remote.ts`. They run on the server with the Supabase service role key and call `requireMember()` first, so the browser never talks to Supabase directly. RLS is on with no policies, so the anon key reads nothing.
 - **Login**: `src/auth.ts` (Auth.js with the Supabase adapter). Sign-in page is `/auth/signin`.
 - **Videos**: rows store `video_provider` + `video_id`. `src/lib/video.ts` turns them into an embed URL. To switch from YouTube, add a provider there and update the rows. Rows without `video_id` show the artwork with "Video coming soon".
+- **Live sessions**: add rows to `public.live_sessions` (time, host, `join_url`). After the session, set `video_id` and it appears as a recording.
+- **New moon check-in**: dates are calculated; the theme for each date comes from `public.moon_themes`.
+- **Intro classes**: `courses.creator_url` links to the full course on the creator's site.
+- **Prices**: `src/lib/pricing.ts`, including the early-bird switch.
 - **Membership**: `public.memberships` is ready for a payment provider. Until payments exist, every signed-in person has access (see `src/lib/server/guard.ts`).
 
 ## Scripts

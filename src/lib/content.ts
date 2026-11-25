@@ -1,6 +1,6 @@
 // Look of the placeholder artwork, per practice type. Shared by server and browser.
 export const PRACTICE_TYPES = ['Yoga', 'Breathwork', 'Qi Gong', 'Meditation', 'Movement'] as const;
-export const THREAD_CATEGORIES = ['Permaculture', 'Community life', 'Practice', 'Eco-village'] as const;
+export const THREAD_CATEGORIES = ['New moon reflections', 'Practice', 'Community life', 'Permaculture', 'Eco-village'] as const;
 
 const forumDots = [0, 1, 2, 3, 4, 5, 6, 7]
 	.map(
@@ -41,3 +41,14 @@ export const COURSE_SVG =
 
 export const gradient = ([a, b]: readonly string[]) => `background:linear-gradient(160deg,${a},${b})`;
 export const percent = (done: number, total: number) => (total ? Math.round((done / total) * 100) : 0);
+
+/** "Monday 30 November, 08:00" in Lisbon time. */
+export const formatSession = (iso: string) =>
+	new Date(iso).toLocaleString('en-GB', {
+		weekday: 'long',
+		day: 'numeric',
+		month: 'long',
+		hour: '2-digit',
+		minute: '2-digit',
+		timeZone: 'Europe/Lisbon'
+	});
