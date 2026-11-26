@@ -60,7 +60,8 @@ body::before {
 	.nav-link:hover, .nav-link[aria-current='page'] { color: var(--color-stone); border-bottom-color: var(--color-glow); }
 
 	/* landing hero: sunrise */
-	.hero { position: relative; overflow: hidden; height: min(100vh, 800px); min-height: 660px; background: linear-gradient(180deg, #070b08 0%, #101a13 38%, #2a3a27 68%, #8a6b45 100%); }
+	/* svh: fills the phone screen below the header with the browser bars shown, so the scroll hint stays visible. */
+	.hero { position: relative; overflow: hidden; height: min(calc(100svh - 4rem), 800px); min-height: 540px; background: linear-gradient(180deg, #070b08 0%, #101a13 38%, #2a3a27 68%, #8a6b45 100%); }
 	.sky-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 55% at 50% 78%, rgba(240, 170, 80, 0.6), transparent 70%); opacity: 0; animation: fadeIn 4.5s 0.3s ease forwards; }
 	.stars { position: absolute; inset: 0 0 40% 0; animation: starsOut 6s 1.2s ease forwards; }
 	.stars span { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff6dd; opacity: 0.8; animation: tw 3s ease-in-out infinite; }
@@ -94,7 +95,8 @@ body::before {
 	@media (max-width: 820px) {
 		.bento { grid-template-columns: 1fr; }
 		.tile { grid-column: auto !important; grid-row: auto !important; }
-		.t-a { padding-bottom: 13rem; }
+		.t-a { padding-bottom: 15rem; }
+		.fan { width: 150px; }
 		.hero-card { display: none; }
 	}
 
