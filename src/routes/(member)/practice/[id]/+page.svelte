@@ -5,7 +5,7 @@
 	import { getPractice } from '#lib/remote/content.remote.ts';
 	import { setPractised } from '#lib/remote/progress.remote.ts';
 
-	const { practice: p, older, newer } = $derived(await getPractice(Number(page.params.week)));
+	const { practice: p, older, newer } = $derived(await getPractice(page.params.id!));
 	const art = $derived(ART[p.type] ?? ART.Yoga);
 </script>
 
@@ -22,7 +22,7 @@
 				<button
 					class="btn btn-amber"
 					disabled={setPractised.pending > 0}
-					onclick={() => setPractised({ week: p.week, done: !p.practised })}
+					onclick={() => setPractised({ id: p.id, done: !p.practised })}
 				>
 					{p.practised ? '✓ Practised' : 'Mark as practised'}
 				</button>
@@ -38,8 +38,8 @@
 			</div>
 		</div>
 		<div class="mt-12 flex justify-between border-t border-white/10 pt-5">
-			{#if older}<a class="link" href="/practice/{older.week}">&larr; Week {older.week}: {older.title}</a>{:else}<span></span>{/if}
-			{#if newer}<a class="link" href="/practice/{newer.week}">Week {newer.week}: {newer.title} &rarr;</a>{/if}
+			{#if older}<a class="link" href="/practice/{older.id}">&larr; Week {older.week}: {older.title}</a>{:else}<span></span>{/if}
+			{#if newer}<a class="link" href="/practice/{newer.id}">Week {newer.week}: {newer.title} &rarr;</a>{/if}
 		</div>
 	</div>
 </div>

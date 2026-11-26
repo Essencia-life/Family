@@ -5,19 +5,19 @@ import { db, must } from '#lib/server/db.ts';
 import { requireMember } from '#lib/server/guard.ts';
 import { thumbnails } from '#lib/video.ts';
 
-const PRACTICE = 'week, type, title, teacher, minutes, description, video_provider, video_id';
+const PRACTICE = 'id, week, type, title, teacher, minutes, description, video_provider, video_id';
 
 /** Public teaser for the landing page: no videos, no descriptions. */
 export const getPreview = query(async () => {
 	const [practices, courses] = await Promise.all([
-		db.from('practices').select('week, type, title, teacher, minutes, video_provider, video_id').order('week', { ascending: false }).limit(6),
+		db.from('practices').select('id, week, type, title, teacher, minutes, video_provider, video_id').order('week', { ascending: false }).order('published_on', { ascending: false }).limit(6),
 		db.from('courses').select('slug, title, duration, colors, creator, lessons(count)').order('position')
 	]);
 	return {
 		// Visitors get thumbnails through /preview, never the video ids themselves.
 		practices: must(practices).map(({ video_provider, video_id, ...p }) => ({
 			...p,
-			thumbs: thumbnails({ video_provider, video_id }).map((t, i) => ({ ...t, url: `/preview/${p.week}/${i}` }))
+			thumbs: thumbnails({ video_provider, video_id }).map((t, i) => ({ ...t, url: `/preview/${p.id}/${i}` }))
 		})),
 		courses: must(courses).map(({ lessons, ...c }) => ({ ...c, lessonCount: lessons[0]?.count ?? 0 }))
 	};
@@ -26,16 +26,16 @@ export const getPreview = query(async () => {
 export const getPractices = query(async () => {
 	const member = await requireMember();
 	const [practices, practised] = await Promise.all([
-		db.from('practices').select(PRACTICE).order('week', { ascending: false }),
-		db.from('practised').select('week').eq('user_id', member.id)
+		db.from('practices').select(PRACTICE).order('week', { ascending: false }).order('published_on', { ascending: false }),
+		db.from('practised').select('practice_id').eq('user_id', member.id)
 	]);
-	const done = new Set(must(practised).map((p) => p.week));
-	return must(practices).map((p) => ({ ...p, practised: done.has(p.week) }));
+	const done = new Set(must(practised).map((p) => p.practice_id));
+	return must(practices).map((p) => ({ ...p, practised: done.has(p.id) }));
 });
 
-export const getPractice = query(v.pipe(v.number(), v.integer()), async (week) => {
+export const getPractice = query(v.pipe(v.string(), v.uuid()), async (id) => {
 	const all = await getPractices();
-	const i = all.findIndex((p) => p.week === week);
+	const i = all.findIndex((p) => p.id === id);
 	if (i < 0) error(404, 'Practice not found');
 	return { practice: all[i], newer: all[i - 1] ?? null, older: all[i + 1] ?? null };
 });

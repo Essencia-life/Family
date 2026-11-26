@@ -46,9 +46,12 @@ export const RESOURCES: Record<string, Resource> = {
 	},
 	practices: {
 		label: 'Weekly practices',
-		key: 'week',
+		key: 'id',
 		columns: ['week', 'type', 'title', 'teacher'],
-		order: [{ column: 'week', ascending: false }],
+		order: [
+			{ column: 'week', ascending: false },
+			{ column: 'published_on', ascending: false }
+		],
 		fields: [
 			{ name: 'week', label: 'Week', type: 'number', required: true },
 			{ name: 'type', label: 'Type', type: 'select', options: PRACTICE_TYPES, required: true },
