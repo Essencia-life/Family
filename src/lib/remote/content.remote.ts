@@ -9,7 +9,7 @@ const PRACTICE = 'week, type, title, teacher, minutes, description, video_provid
 /** Public teaser for the landing page: no videos, no descriptions. */
 export const getPreview = query(async () => {
 	const [practices, courses] = await Promise.all([
-		db.from('practices').select('week, type, title, teacher, minutes').order('week', { ascending: false }).limit(4),
+		db.from('practices').select('week, type, title, teacher, minutes').order('week', { ascending: false }).limit(6),
 		db.from('courses').select('slug, title, duration, colors, creator, lessons(count)').order('position')
 	]);
 	return {

@@ -9,19 +9,20 @@
 </script>
 
 <a href={locked ? '/#pricing' : `/practice/${p.week}`} class="card">
-	<Thumb colors={art.colors} svg={art.svg}>
+	<Thumb colors={art.colors} svg={art.svg} portrait>
 		<span class="chip on-img">{p.type}</span>
+		<span class="wk-num">{p.week}</span>
 		{#if locked}
 			<div class="lock">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-label="Members only"
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"
 					><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 018 0v3" /></svg
-				>
+				>Members
 			</div>
 		{:else}
 			<span class="play"><PlayIcon /></span>
 		{/if}
 	</Thumb>
-	<p class="mt-3 font-display text-[0.62rem] font-bold tracking-[0.16em] text-moss uppercase">Week {p.week} · {p.minutes} min</p>
-	<p class="font-display text-[1.05rem] leading-snug font-medium text-forest">{p.title}</p>
-	<p class="text-[0.78rem] opacity-60">with {p.teacher}{p.practised ? ' · practised' : ''}</p>
+	<p class="meta">{p.minutes} min · with {p.teacher}</p>
+	<p class="ttl">{p.title}</p>
+	{#if p.practised}<p class="muted text-[0.74rem]">✓ practised</p>{/if}
 </a>

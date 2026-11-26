@@ -18,9 +18,9 @@
 	<title>Essência Family</title>
 </svelte:head>
 
-<header class="sticky top-0 z-30 border-b border-moss/15 bg-stone/85 backdrop-blur">
-	<div class="container flex h-16 items-center justify-between">
-		<a href={user ? '/home' : '/'} class="font-display text-xl font-medium text-forest">Essência <span class="text-amber">Family</span></a>
+<header class="top">
+	<div class="wrap flex h-16 items-center justify-between">
+		<a href={user ? '/home' : '/'} class="logo"><span class="orb"></span><span>Essência <i>Family</i></span></a>
 		{#if user}
 			<nav class="flex items-center gap-5">
 				{#each nav as [href, label] (href)}
@@ -29,7 +29,7 @@
 				{#if data.maintainer}<a href="/admin" class="nav-link" aria-current={current('/admin')}>Admin</a>{/if}
 				<a
 					href="/account"
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-moss font-display text-[0.8rem] font-bold text-stone"
+					class="orb flex h-8 w-8 items-center justify-center rounded-full font-display text-[0.8rem] font-bold text-[#241a08]"
 					aria-label="Account"
 					aria-current={current('/account')}>{(user.name || user.email || '?')[0].toUpperCase()}</a
 				>
@@ -38,7 +38,7 @@
 			<nav class="flex items-center gap-6">
 				<a href="/#pricing" class="nav-link hidden md:inline">Membership</a>
 				<a href="/auth/signin?callbackUrl=/home" class="nav-link">Log in</a>
-				<a href="/#pricing" class="pill-btn bg-forest px-5! py-2! text-stone">Join the Family</a>
+				<a href="/#pricing" class="btn btn-amber btn-sm">Join the Family</a>
 			</nav>
 		{/if}
 	</div>
@@ -48,4 +48,4 @@
 	{@render children()}
 </main>
 
-<p class="py-10 text-center text-[0.8rem] text-brown/40 italic">Essência Cooperativa · Aljezur, Portugal · essencia.life</p>
+<p class="py-12 text-center text-[0.8rem] text-ink/40 italic">Essência Cooperativa · Aljezur, Portugal · essencia.life</p>

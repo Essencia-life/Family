@@ -1,9 +1,18 @@
 import { error } from '@sveltejs/kit';
-import { command } from '$app/server';
+import { command, query } from '$app/server';
 import * as v from 'valibot';
 import { db, must } from '#lib/server/db.ts';
 import { requireMember } from '#lib/server/guard.ts';
+import { rhythm } from '#lib/rhythm.ts';
 import { getCourse, getCourses, getPractice, getPractices } from './content.remote.ts';
+
+/** The member's practice rhythm: last 7 days and mornings this month. */
+export const getRhythm = query(async () => {
+	const member = await requireMember();
+	const since = new Date(Date.now() - 32 * 864e5).toISOString();
+	const rows = must(await db.from('practised').select('practised_at').eq('user_id', member.id).gte('practised_at', since));
+	return rhythm(rows.map((r) => r.practised_at));
+});
 
 export const setPractised = command(
 	v.object({ week: v.pipe(v.number(), v.integer()), done: v.boolean() }),
@@ -17,6 +26,7 @@ export const setPractised = command(
 		);
 		await getPractices().refresh();
 		await getPractice(week).refresh();
+		await getRhythm().refresh();
 	}
 );
 
