@@ -7,12 +7,11 @@
 	import {
 		createThread,
 		getCircles,
-		getLiveSessions,
 		getThreads,
 		replyToThread,
 		setGoing
 	} from '#lib/remote/community.remote.ts';
-	import { getRecordings } from '#lib/remote/content.remote.ts';
+	import { getLiveSessions, getRecordings } from '#lib/remote/content.remote.ts';
 
 	const [circles, live, recordings, threads] = $derived(
 		await Promise.all([getCircles(), getLiveSessions(), getRecordings(), getThreads()])
@@ -25,6 +24,7 @@
 		document.getElementById('exchange')?.scrollIntoView({ behavior: 'smooth' });
 	}
 	const daysTo = (day: string) => Math.max(0, Math.round((Date.parse(day + 'T19:00:00Z') - Date.now()) / 864e5));
+	const time = (iso: string) => new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Lisbon' });
 	const date = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 </script>
 
@@ -44,8 +44,8 @@
 				<p class="mt-2 mb-1 font-accent text-[1.4rem] text-glow italic">
 					{daysTo(circles.next) ? `in ${daysTo(circles.next)} day${daysTo(circles.next) > 1 ? 's' : ''}` : 'tonight'}
 				</p>
-				<!-- Guess: time comes from the prototype. The call link is not wired up yet. -->
-				<p class="muted mb-6">19:00 Lisbon time · live on video</p>
+				<!-- Without a planned time, 19:00 comes from the prototype. -->
+				<p class="muted mb-6">{circles.theme?.starts_at ? time(circles.theme.starts_at) : '19:00'} Lisbon time · live on video</p>
 				{#if circles.theme}
 					<p class="display text-xl">This month's theme: {circles.theme.theme}</p>
 					<p class="mt-1 mb-4 max-w-xl font-accent text-[1.15rem] text-stone/85 italic">{circles.theme.invitation}</p>
@@ -57,6 +57,9 @@
 					<button class="btn btn-amber" disabled={setGoing.pending > 0} onclick={() => setGoing(!circles.going)}>
 						{circles.going ? "✓ You're coming" : "I'll be there"}
 					</button>
+					{#if circles.theme?.join_url}
+						<a href={circles.theme.join_url} class="btn btn-light" target="_blank" rel="noopener">Join the meeting &nearr;</a>
+					{/if}
 					<button class="btn btn-ghost" onclick={shareReflection}>Share your reflection</button>
 				</div>
 				<p class="muted mt-6 text-[0.8rem]">Then: {circles.later.map(formatDay).join(' and ')}</p>
@@ -64,36 +67,23 @@
 			<div class="moonwrap flex justify-center"><Moon size={260} /></div>
 		</div>
 
-		<h2 class="display mt-14 mb-4 text-2xl md:text-3xl">Live sessions</h2>
-		<!-- Guess: the plan says two a week; days and times come from the live_sessions table. -->
+		<h2 class="display mt-14 mb-4 text-2xl md:text-3xl">Live practice</h2>
+		<!-- Planned in the back-office as practices with a "Live at" time; afterwards they are recordings in the practice library. -->
 		<div class="grid gap-4 md:grid-cols-2">
-			{#each live.upcoming as s (s.id)}
-				<a href="/live/{s.id}" class="glass card flex items-center gap-5">
+			{#each live.slice(0, 4) as s (s.id)}
+				<a href="/practice/{s.id}" class="glass card flex items-center gap-5">
 					<span class="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-stone text-forest"><PlayIcon size={18} /></span>
 					<span>
-						<span class="meta mt-0! block">{formatSession(s.starts_at)}</span>
+						<span class="meta mt-0! block">{s.type} · {formatSession(s.starts_at!)}</span>
 						<span class="display block text-xl">{s.title}</span>
-						<span class="muted text-[0.84rem]">with {s.host}</span>
+						<span class="muted text-[0.84rem]">with {s.teacher}</span>
 					</span>
 				</a>
 			{:else}
-				<p class="muted">The next live sessions will be announced here.</p>
+				<p class="muted">The next live practices will be announced here.</p>
 			{/each}
 		</div>
-		{#if live.recordings.length}
-			<h3 class="display mt-10 mb-4 text-xl">Missed one? Watch the recording</h3>
-			<div class="rail wide">
-				{#each live.recordings as s (s.id)}
-					<a href="/live/{s.id}" class="card">
-						<Thumb colors={ART.Meditation.colors} svg={ART.Meditation.svg} video={s}>
-							<span class="chip on-img">Live</span><span class="play"><PlayIcon /></span>
-						</Thumb>
-						<p class="meta">{date(s.starts_at)} · {s.minutes} min · with {s.host}</p>
-						<p class="ttl">{s.title}</p>
-					</a>
-				{/each}
-			</div>
-		{/if}
+		<p class="muted mt-4 text-[0.85rem]">Missed one? Every live practice stays in the <a href="/practice" class="link">practice library</a>.</p>
 
 		<h2 class="display mt-14 mb-4 text-2xl md:text-3xl">ZEGG Forum recordings</h2>
 		<div class="grid gap-5 md:grid-cols-3">

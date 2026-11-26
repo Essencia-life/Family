@@ -5,12 +5,16 @@ import { db, must } from '#lib/server/db.ts';
 import { requireMember } from '#lib/server/guard.ts';
 import { thumbnails } from '#lib/video.ts';
 
-const PRACTICE = 'id, week, type, title, teacher, minutes, description, video_provider, video_id';
+const PRACTICE = 'id, week, type, title, teacher, minutes, description, video_provider, video_id, starts_at';
+
+/** A live stream that has not ended yet. Afterwards the practice is its recording in the library. */
+const planned = (p: { starts_at: string | null; minutes: number }, now = Date.now()) =>
+	!!p.starts_at && Date.parse(p.starts_at) + p.minutes * 60e3 > now;
 
 /** Public teaser for the landing page: no videos, no descriptions. */
 export const getPreview = query(async () => {
 	const [practices, courses] = await Promise.all([
-		db.from('practices').select('id, week, type, title, teacher, minutes, video_provider, video_id').order('week', { ascending: false }).order('published_on', { ascending: false }).limit(6),
+		db.from('practices').select('id, week, type, title, teacher, minutes, video_provider, video_id').or(`starts_at.is.null,starts_at.lt.${new Date().toISOString()}`).order('week', { ascending: false }).order('published_on', { ascending: false }).limit(6),
 		db.from('courses').select('slug, title, duration, colors, creator, lessons(count)').order('position')
 	]);
 	return {
@@ -30,14 +34,24 @@ export const getPractices = query(async () => {
 		db.from('practised').select('practice_id').eq('user_id', member.id)
 	]);
 	const done = new Set(must(practised).map((p) => p.practice_id));
-	return must(practices).map((p) => ({ ...p, practised: done.has(p.id) }));
+	return must(practices).map((p) => ({ ...p, practised: done.has(p.id), planned: planned(p) }));
 });
+
+/** The library: uploaded practices and the recordings of past live streams. */
+export const getLibrary = query(async () => (await getPractices()).filter((p) => !p.planned));
+
+/** Planned live streams (including one running now), soonest first. */
+export const getLiveSessions = query(async () =>
+	(await getPractices()).filter((p) => p.planned).sort((a, b) => Date.parse(a.starts_at!) - Date.parse(b.starts_at!))
+);
 
 export const getPractice = query(v.pipe(v.string(), v.uuid()), async (id) => {
 	const all = await getPractices();
-	const i = all.findIndex((p) => p.id === id);
-	if (i < 0) error(404, 'Practice not found');
-	return { practice: all[i], newer: all[i - 1] ?? null, older: all[i + 1] ?? null };
+	const practice = all.find((p) => p.id === id);
+	if (!practice) error(404, 'Practice not found');
+	const library = all.filter((p) => !p.planned);
+	const i = library.indexOf(practice);
+	return { practice, newer: i < 0 ? null : (library[i - 1] ?? null), older: i < 0 ? null : (library[i + 1] ?? null) };
 });
 
 export const getCourses = query(async () => {

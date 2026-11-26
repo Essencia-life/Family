@@ -4,7 +4,7 @@ import * as v from 'valibot';
 import { db, must } from '#lib/server/db.ts';
 import { requireMember } from '#lib/server/guard.ts';
 import { rhythm } from '#lib/rhythm.ts';
-import { getCourse, getCourses, getPractice, getPractices } from './content.remote.ts';
+import { getCourse, getCourses, getLibrary, getPractice, getPractices } from './content.remote.ts';
 
 /** The member's practice rhythm: last 7 days and mornings this month. */
 export const getRhythm = query(async () => {
@@ -25,6 +25,7 @@ export const setPractised = command(
 				: await db.from('practised').delete().match(row)
 		);
 		await getPractices().refresh();
+		await getLibrary().refresh();
 		await getPractice(id).refresh();
 		await getRhythm().refresh();
 	}

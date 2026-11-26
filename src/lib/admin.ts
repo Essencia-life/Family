@@ -20,6 +20,8 @@ export type Resource = {
 	/** Columns shown in the list. */
 	columns: string[];
 	order: { column: string; ascending: boolean }[];
+	/** Rows whose timestamp in this column lies ahead are listed apart, above the rest. */
+	upcoming?: { column: string; label: string; restLabel: string };
 	fields: Field[];
 };
 
@@ -29,25 +31,11 @@ const VIDEO: Field[] = [
 ];
 
 export const RESOURCES: Record<string, Resource> = {
-	live_sessions: {
-		label: 'Live sessions',
-		key: 'id',
-		columns: ['starts_at', 'title', 'host', 'video_id'],
-		order: [{ column: 'starts_at', ascending: false }],
-		fields: [
-			{ name: 'title', label: 'Title', type: 'text', required: true },
-			{ name: 'host', label: 'Host', type: 'text', required: true },
-			{ name: 'starts_at', label: 'Starts at (Lisbon time)', type: 'datetime', required: true },
-			{ name: 'minutes', label: 'Minutes', type: 'number', required: true },
-			{ name: 'description', label: 'Description', type: 'textarea' },
-			{ name: 'join_url', label: 'Join link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link. Members see it shortly before the session.' },
-			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'Set after the session; it then shows up as a recording.' } : f))
-		]
-	},
 	practices: {
 		label: 'Weekly practices',
 		key: 'id',
-		columns: ['week', 'type', 'title', 'teacher'],
+		columns: ['week', 'type', 'title', 'teacher', 'starts_at'],
+		upcoming: { column: 'starts_at', label: 'Planned live', restLabel: 'Library' },
 		order: [
 			{ column: 'week', ascending: false },
 			{ column: 'published_on', ascending: false }
@@ -59,8 +47,9 @@ export const RESOURCES: Record<string, Resource> = {
 			{ name: 'teacher', label: 'Teacher', type: 'text', required: true },
 			{ name: 'minutes', label: 'Minutes', type: 'number', required: true },
 			{ name: 'published_on', label: 'Published on', type: 'date', required: true },
+			{ name: 'starts_at', label: 'Live at (Lisbon time)', type: 'datetime', nullable: true, hint: 'For a live stream: until then members see it as planned, afterwards it is the recording. Empty for an uploaded video.' },
 			{ name: 'description', label: 'Description', type: 'textarea' },
-			...VIDEO
+			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'YouTube: the part after "watch?v=". For a live stream, the id of the scheduled stream; it stays the recording.' } : f))
 		]
 	},
 	courses: {
@@ -111,14 +100,17 @@ export const RESOURCES: Record<string, Resource> = {
 		]
 	},
 	moon_themes: {
-		label: 'New moon themes',
+		label: 'New moon meetings',
 		key: 'circle_on',
-		columns: ['circle_on', 'theme'],
+		columns: ['circle_on', 'theme', 'starts_at'],
 		order: [{ column: 'circle_on', ascending: false }],
+		upcoming: { column: 'circle_on', label: 'Planned', restLabel: 'Past' },
 		fields: [
 			{ name: 'circle_on', label: 'New moon date', type: 'date', required: true, hint: 'Must match a new moon date shown on the community page.' },
 			{ name: 'theme', label: 'Theme', type: 'text', required: true },
-			{ name: 'invitation', label: 'Invitation', type: 'textarea' }
+			{ name: 'invitation', label: 'Invitation', type: 'textarea' },
+			{ name: 'starts_at', label: 'Meeting starts at (Lisbon time)', type: 'datetime', nullable: true, hint: 'Empty shows 19:00 on the new moon day.' },
+			{ name: 'join_url', label: 'Meeting link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link for the meeting.' }
 		]
 	}
 };

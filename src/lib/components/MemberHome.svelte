@@ -6,16 +6,16 @@
 	import PlayIcon from '#lib/components/PlayIcon.svelte';
 	import PracticeCard from '#lib/components/PracticeCard.svelte';
 	import Ring from '#lib/components/Ring.svelte';
-	import { getCircles, getLiveSessions } from '#lib/remote/community.remote.ts';
-	import { getCourses, getPractices } from '#lib/remote/content.remote.ts';
+	import { getCircles } from '#lib/remote/community.remote.ts';
+	import { getCourses, getLibrary, getLiveSessions } from '#lib/remote/content.remote.ts';
 	import { getRhythm } from '#lib/remote/progress.remote.ts';
 	import { thumbnails } from '#lib/video.ts';
 	import Cover from '#lib/components/Cover.svelte';
 
 	const [practices, courses, circles, live, rhythm] = $derived(
-		await Promise.all([getPractices(), getCourses(), getCircles(), getLiveSessions(), getRhythm()])
+		await Promise.all([getLibrary(), getCourses(), getCircles(), getLiveSessions(), getRhythm()])
 	);
-	const nextLive = $derived(live.upcoming[0]);
+	const nextLive = $derived(live[0]);
 	const latest = $derived(practices[0]);
 	const art = $derived(ART[latest?.type] ?? ART.Yoga);
 	// Courses already started come first.
@@ -54,12 +54,12 @@
 
 		<div class="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#if nextLive}
-				<a href="/live/{nextLive.id}" class="glass card flex! items-center gap-5">
+				<a href="/practice/{nextLive.id}" class="glass card flex! items-center gap-5">
 					<span class="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full bg-stone text-forest"><PlayIcon size={22} /></span>
 					<span>
-						<span class="meta mt-0! block">Next live session</span>
-						<span class="display block text-xl">{formatSession(nextLive.starts_at)}</span>
-						<span class="muted text-[0.84rem]">{nextLive.title} · with {nextLive.host}</span>
+						<span class="meta mt-0! block">Next live practice</span>
+						<span class="display block text-xl">{formatSession(nextLive.starts_at!)}</span>
+						<span class="muted text-[0.84rem]">{nextLive.title} · with {nextLive.teacher}</span>
 					</span>
 				</a>
 			{/if}

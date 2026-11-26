@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { PRACTICE_TYPES } from '#lib/content.ts';
 	import PracticeCard from '#lib/components/PracticeCard.svelte';
-	import { getPractices } from '#lib/remote/content.remote.ts';
+	import { getLibrary } from '#lib/remote/content.remote.ts';
 
-	const practices = $derived(await getPractices());
+	const practices = $derived(await getLibrary());
 	let filter = $state<string>('All');
 	const shown = $derived(filter === 'All' ? practices : practices.filter((p) => p.type === filter));
 </script>

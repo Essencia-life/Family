@@ -5,7 +5,7 @@
 
 	const table = $derived(page.params.table!);
 	const r = $derived(RESOURCES[table]);
-	const rows = $derived(await listRows(table));
+	const all = $derived(await listRows(table));
 	const cell = (column: string, value: unknown) => {
 		const field = r.fields.find((f) => f.name === column);
 		return field ? toInput(field, value).replace('T', ' ') : String(value ?? '');
@@ -21,7 +21,7 @@
 	<a href="/admin/{table}/new" class="btn btn-amber btn-sm">New</a>
 </div>
 
-{#if rows.length}
+{#snippet list(rows: typeof all)}
 	<div class="overflow-x-auto">
 		<table class="w-full text-left text-[0.85rem]">
 			<thead>
@@ -48,6 +48,17 @@
 			</tbody>
 		</table>
 	</div>
+{/snippet}
+
+{#if r.upcoming}
+	{@const col = r.upcoming.column}
+	{@const ahead = all.filter(({ row }) => row[col] && Date.parse(String(row[col])) > Date.now())}
+	<h2 class="display mb-3 text-xl">{r.upcoming.label}</h2>
+	{#if ahead.length}{@render list(ahead.toSorted((a, b) => Date.parse(String(a.row[col])) - Date.parse(String(b.row[col]))))}{:else}<p class="muted">Nothing planned.</p>{/if}
+	<h2 class="display mt-10 mb-3 text-xl">{r.upcoming.restLabel}</h2>
+	{@render list(all.filter((x) => !ahead.includes(x)))}
+{:else if all.length}
+	{@render list(all)}
 {:else}
 	<p class="muted">Nothing here yet.</p>
 {/if}

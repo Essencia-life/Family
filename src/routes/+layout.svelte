@@ -2,6 +2,7 @@
 	import './layout.css';
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
+	import Bell from '#lib/components/Bell.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children, data }: LayoutProps = $props();
@@ -45,6 +46,7 @@
 					<a {href} class="nav-link" aria-current={current(href)}>{label}</a>
 				{/each}
 				{#if data.maintainer}<a href="/admin" class="nav-link" aria-current={current('/admin')}>Admin</a>{/if}
+				<Bell />
 				<a
 					href="/account"
 					class="orb flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[0.8rem] font-bold text-[#241a08]"

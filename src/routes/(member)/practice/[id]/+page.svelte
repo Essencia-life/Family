@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { ART } from '#lib/content.ts';
+	import { ART, formatSession } from '#lib/content.ts';
 	import Player from '#lib/components/Player.svelte';
 	import { getPractice } from '#lib/remote/content.remote.ts';
 	import { setPractised } from '#lib/remote/progress.remote.ts';
@@ -15,7 +15,7 @@
 		<div class="mt-5"><Player video={p} title={p.title} colors={art.colors} svg={art.svg} /></div>
 		<div class="mt-10 grid gap-8 md:grid-cols-[1fr_300px]">
 			<div>
-				<span class="chip">Week {p.week} · {p.type}</span>
+				<span class="chip">{p.planned ? `Live · ${formatSession(p.starts_at!)} · Lisbon time` : `Week ${p.week} · ${p.type}`}</span>
 				<h1 class="display mt-3 mb-1 text-3xl md:text-5xl">{p.title}</h1>
 				<p class="muted mb-5 text-[0.88rem]">with {p.teacher} · {p.minutes} min</p>
 				<p class="muted mb-7 leading-[1.8]">{p.description}</p>
