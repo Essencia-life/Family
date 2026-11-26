@@ -113,7 +113,8 @@ export const RESOURCES: Record<string, Resource> = {
 			{ name: 'theme', label: 'Theme', type: 'text', required: true },
 			{ name: 'invitation', label: 'Invitation', type: 'textarea' },
 			{ name: 'starts_at', label: 'Meeting starts at (Lisbon time)', type: 'datetime', nullable: true, hint: 'Empty shows 19:00 on the new moon day.' },
-			{ name: 'join_url', label: 'Meeting link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link for the meeting.' }
+			{ name: 'join_url', label: 'Meeting link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link for the meeting.' },
+			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'Optional recording of the meeting. Once set, it shows on the community page.' } : f))
 		]
 	}
 };

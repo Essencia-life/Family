@@ -25,7 +25,7 @@ describe('parseRow', () => {
 	it('reports missing and invalid fields', () => {
 		const { issues } = parseRow(practices, { type: 'Podcast', minutes: 'ten', starts_at: 'tomorrow', video_provider: 'vimeo' });
 		expect(issues.map((i) => i.path[0])).toEqual(['week', 'type', 'title', 'teacher', 'minutes', 'published_on', 'starts_at', 'video_provider']);
-		const moon = parseRow(RESOURCES.moon_themes, { circle_on: '2026-12-09', theme: 'Seeds', join_url: 'javascript:alert(1)' });
+		const moon = parseRow(RESOURCES.moon_themes, { circle_on: '2026-12-09', theme: 'Seeds', join_url: 'javascript:alert(1)', video_provider: 'youtube' });
 		expect(moon.issues.map((i) => i.path[0])).toEqual(['join_url']);
 	});
 	it('splits lists', () => {

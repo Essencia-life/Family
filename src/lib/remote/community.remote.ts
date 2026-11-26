@@ -18,6 +18,25 @@ export const getCircles = query(async () => {
 	return { next, later, going: !!must(rsvp), theme: must(theme) };
 });
 
+/** Past new moon meetings that have a recording, newest first. */
+export const getMoonRecordings = query(async () => {
+	await requireMember();
+	return must(
+		await db
+			.from('moon_themes')
+			.select('circle_on, theme, invitation, video_provider, video_id')
+			.not('video_id', 'is', null)
+			.lt('circle_on', new Date().toISOString().slice(0, 10))
+			.order('circle_on', { ascending: false })
+	);
+});
+
+export const getMoonRecording = query(v.string(), async (date) => {
+	const recording = (await getMoonRecordings()).find((m) => m.circle_on === date);
+	if (!recording) error(404, 'Recording not found');
+	return recording;
+});
+
 export const setGoing = command(v.boolean(), async (going) => {
 	const member = await requireMember();
 	const row = { user_id: member.id, circle_on: nextNewMoons(1)[0] };
