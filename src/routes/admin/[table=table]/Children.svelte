@@ -28,7 +28,7 @@
 								{#if column === 'title'}
 									<a href="/admin/{table}/{encodeURIComponent(key)}" class="text-stone underline">{i + 1}. {cell(column, row[column]) || '(empty)'}</a>
 								{:else}
-									<span class="muted">{cell(column, row[column])}</span>
+									<span class="muted max-sm:hidden">{cell(column, row[column])}</span>
 								{/if}
 							</td>
 						{/each}

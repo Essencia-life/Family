@@ -4,6 +4,7 @@ import * as v from 'valibot';
 import { parseRow, RESOURCES } from '#lib/admin.ts';
 import { db, must } from '#lib/server/db.ts';
 import { requireMaintainer } from '#lib/server/guard.ts';
+import { getThreads } from './community.remote.ts';
 
 const table = v.picklist(Object.keys(RESOURCES));
 const ref = v.object({ table, key: v.pipe(v.string(), v.nonEmpty()) });
@@ -72,4 +73,11 @@ export const moveRow = command(v.object({ ...ref.entries, by: v.picklist([-1, 1]
 		for (const result of await Promise.all(updates)) must(result);
 	}
 	await listRows(table).refresh();
+});
+
+/** Exchange moderation. Deleting a post also deletes its replies (on delete cascade). */
+export const deletePost = command(v.object({ kind: v.picklist(['threads', 'replies']), id: v.pipe(v.string(), v.uuid()) }), async ({ kind, id }) => {
+	await requireMaintainer();
+	must(await db.from(kind).delete().eq('id', id));
+	await getThreads().refresh();
 });

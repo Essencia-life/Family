@@ -8,4 +8,5 @@
 	{#each Object.entries(RESOURCES).filter(([, r]) => !r.parent) as [name, r] (name)}
 		<a href="/admin/{name}" class="glass card display text-xl">{r.label}</a>
 	{/each}
+	<a href="/admin/exchange" class="glass card display text-xl">Exchange</a>
 </div>
