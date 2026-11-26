@@ -8,7 +8,16 @@ export const getNotifications = query(async () => {
 	const member = await requireMember();
 	const seen = must(await db.from('notifications_seen').select('seen_at').eq('user_id', member.id).maybeSingle());
 	const since = seen?.seen_at ?? new Date(Date.now() - 14 * 864e5).toISOString();
-	const [practices, courses, recordings, threads, replies] = await Promise.all([
+	const now = Date.now();
+	const [live, practices, courses, recordings, threads, replies] = await Promise.all([
+		db
+			.from('live_sessions')
+			.select('id, title, starts_at')
+			.gte('starts_at', new Date(now).toISOString())
+			.lte('starts_at', new Date(now + 3600e3).toISOString())
+			.order('starts_at')
+			.limit(1)
+			.maybeSingle(),
 		db.from('practices').select('title').gt('created_at', since),
 		db.from('courses').select('title').gt('created_at', since),
 		db.from('recordings').select('title').gt('created_at', since),
@@ -27,7 +36,10 @@ export const getNotifications = query(async () => {
 		threads: must(threads),
 		replies: must(replies).map(({ threads, ...r }) => ({ ...r, title: (threads as unknown as { title: string }).title }))
 	});
-	return { items, total: items.reduce((n, i) => n + i.count, 0) };
+	// A live session starting within the hour is always listed, but counts in the badge only until the bell was opened during that hour.
+	const soon = must(live);
+	const liveUnseen = !!soon && Date.parse(since) < Date.parse(soon.starts_at) - 3600e3;
+	return { live: soon, items, total: items.reduce((n, i) => n + i.count, 0) + (liveUnseen ? 1 : 0) };
 });
 
 /** Called when the member opens the bell: from now on only newer things count. */
