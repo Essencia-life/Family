@@ -29,27 +29,6 @@ export const setGoing = command(v.boolean(), async (going) => {
 	await getCircles().refresh();
 });
 
-const LIVE = 'id, kind, title, host, starts_at, minutes, description, join_url, video_provider, video_id';
-
-/** Upcoming live sessions (including one running now) and the recordings of past ones. */
-export const getLiveSessions = query(async () => {
-	await requireMember();
-	// A session counts as upcoming until 3 hours after it started; long enough for any session.
-	const cutoff = new Date(Date.now() - 3 * 3600e3).toISOString();
-	const [upcoming, past] = await Promise.all([
-		db.from('live_sessions').select(LIVE).gte('starts_at', cutoff).order('starts_at').limit(4),
-		db.from('live_sessions').select(LIVE).lt('starts_at', cutoff).order('starts_at', { ascending: false }).limit(12)
-	]);
-	return { upcoming: must(upcoming), recordings: must(past) };
-});
-
-export const getLiveSession = query(v.pipe(v.string(), v.uuid()), async (id) => {
-	await requireMember();
-	const session = must(await db.from('live_sessions').select(LIVE).eq('id', id).maybeSingle());
-	if (!session) error(404, 'Session not found');
-	return session;
-});
-
 export const getThreads = query(async () => {
 	await requireMember();
 	return must(

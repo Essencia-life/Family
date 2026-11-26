@@ -54,15 +54,18 @@ insert into public.replies (thread_id, author_id, author_name, body) values
 update public.courses set creator = 'Essência', creator_url = 'https://essencia.life' where creator is null;
 
 -- Guess: Monday and Thursday at 08:00 Lisbon time, the morning practice streamed live.
--- Four weeks ahead and two weeks back from the day the seed runs; past ones show as recordings.
-insert into public.live_sessions (title, host, starts_at, minutes, description)
+-- Four weeks ahead from the day the seed runs; once streamed, they are recordings in the practice library.
+insert into public.practices (week, type, title, teacher, minutes, description, published_on, starts_at)
 select
+  extract(week from d)::int,
+  case extract(isodow from d) when 1 then 'Yoga' else 'Breathwork' end,
   case extract(isodow from d) when 1 then 'Monday morning practice' else 'Thursday morning practice' end,
   case extract(isodow from d) when 1 then 'Mara' else 'Juno' end,
-  (d + time '08:00') at time zone 'Europe/Lisbon',
   45,
-  'Live from the land at Essência. Join from wherever you are, camera on or off.'
-from generate_series(current_date - 14, current_date + 28, interval '1 day') as g(d)
+  'Live from the land at Essência. Join from wherever you are.',
+  d::date,
+  (d + time '08:00') at time zone 'Europe/Lisbon'
+from generate_series(current_date + 1, current_date + 28, interval '1 day') as g(d)
 where extract(isodow from d) in (1, 4);
 
 insert into public.moon_themes (circle_on, theme, invitation) values

@@ -1,6 +1,6 @@
 // What the back-office can edit. Shared by server (validation) and browser (forms).
 // To make another table editable, add an entry here; the admin pages and remote functions are generic.
-import { LIVE_KINDS, PRACTICE_TYPES } from './content.ts';
+import { PRACTICE_TYPES } from './content.ts';
 
 export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'datetime' | 'url' | 'select' | 'list';
 export type Field = {
@@ -20,6 +20,8 @@ export type Resource = {
 	/** Columns shown in the list. */
 	columns: string[];
 	order: { column: string; ascending: boolean }[];
+	/** Rows whose timestamp in this column lies ahead are listed apart, above the rest. */
+	upcoming?: { column: string; label: string; restLabel: string };
 	fields: Field[];
 };
 
@@ -29,26 +31,11 @@ const VIDEO: Field[] = [
 ];
 
 export const RESOURCES: Record<string, Resource> = {
-	live_sessions: {
-		label: 'Live sessions',
-		key: 'id',
-		columns: ['starts_at', 'kind', 'title', 'host', 'video_id'],
-		order: [{ column: 'starts_at', ascending: false }],
-		fields: [
-			{ name: 'kind', label: 'Kind', type: 'select', options: LIVE_KINDS, required: true },
-			{ name: 'title', label: 'Title', type: 'text', required: true },
-			{ name: 'host', label: 'Host', type: 'text', required: true },
-			{ name: 'starts_at', label: 'Starts at (Lisbon time)', type: 'datetime', required: true },
-			{ name: 'minutes', label: 'Minutes', type: 'number', required: true },
-			{ name: 'description', label: 'Description', type: 'textarea' },
-			{ name: 'join_url', label: 'Join link', type: 'url', nullable: true, hint: 'Morning practice: the YouTube live link. Other sessions: Zoom/Jitsi link.' },
-			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'Set after the session; it then shows up as a recording.' } : f))
-		]
-	},
 	practices: {
 		label: 'Weekly practices',
 		key: 'id',
-		columns: ['week', 'type', 'title', 'teacher'],
+		columns: ['week', 'type', 'title', 'teacher', 'starts_at'],
+		upcoming: { column: 'starts_at', label: 'Planned live', restLabel: 'Library' },
 		order: [
 			{ column: 'week', ascending: false },
 			{ column: 'published_on', ascending: false }
@@ -60,8 +47,9 @@ export const RESOURCES: Record<string, Resource> = {
 			{ name: 'teacher', label: 'Teacher', type: 'text', required: true },
 			{ name: 'minutes', label: 'Minutes', type: 'number', required: true },
 			{ name: 'published_on', label: 'Published on', type: 'date', required: true },
+			{ name: 'starts_at', label: 'Live at (Lisbon time)', type: 'datetime', nullable: true, hint: 'For a live stream: until then members see it as planned, afterwards it is the recording. Empty for an uploaded video.' },
 			{ name: 'description', label: 'Description', type: 'textarea' },
-			...VIDEO
+			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'YouTube: the part after "watch?v=". For a live stream, the id of the scheduled stream; it stays the recording.' } : f))
 		]
 	},
 	courses: {

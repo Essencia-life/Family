@@ -10,21 +10,23 @@ describe('Lisbon time', () => {
 });
 
 describe('parseRow', () => {
-	const live = RESOURCES.live_sessions;
+	const practices = RESOURCES.practices;
 	it('converts values and empties', () => {
-		const { row, issues } = parseRow(live, {
-			kind: 'Morning practice', title: ' Morning ', host: 'Mara', starts_at: '2026-12-01T08:00', minutes: '60',
-			description: '', join_url: '', video_provider: 'youtube', video_id: ''
+		const { row, issues } = parseRow(practices, {
+			week: '49', type: 'Yoga', title: ' Morning ', teacher: 'Mara', minutes: '45', published_on: '2026-12-01',
+			starts_at: '2026-12-01T08:00', description: '', video_provider: 'youtube', video_id: ''
 		});
 		expect(issues).toEqual([]);
 		expect(row).toEqual({
-			kind: 'Morning practice', title: 'Morning', host: 'Mara', starts_at: '2026-12-01T08:00:00.000Z', minutes: 60,
-			description: '', join_url: null, video_provider: 'youtube', video_id: null
+			week: 49, type: 'Yoga', title: 'Morning', teacher: 'Mara', minutes: 45, published_on: '2026-12-01',
+			starts_at: '2026-12-01T08:00:00.000Z', description: '', video_provider: 'youtube', video_id: null
 		});
 	});
 	it('reports missing and invalid fields', () => {
-		const { issues } = parseRow(live, { kind: 'Podcast', minutes: 'ten', join_url: 'javascript:alert(1)', video_provider: 'vimeo' });
-		expect(issues.map((i) => i.path[0])).toEqual(['kind', 'title', 'host', 'starts_at', 'minutes', 'join_url', 'video_provider']);
+		const { issues } = parseRow(practices, { type: 'Podcast', minutes: 'ten', starts_at: 'tomorrow', video_provider: 'vimeo' });
+		expect(issues.map((i) => i.path[0])).toEqual(['week', 'type', 'title', 'teacher', 'minutes', 'published_on', 'starts_at', 'video_provider']);
+		const moon = parseRow(RESOURCES.moon_themes, { circle_on: '2026-12-09', theme: 'Seeds', join_url: 'javascript:alert(1)' });
+		expect(moon.issues.map((i) => i.path[0])).toEqual(['join_url']);
 	});
 	it('splits lists', () => {
 		expect(parseRow(RESOURCES.courses, { colors: '#111, #222' }).row.colors).toEqual(['#111', '#222']);
