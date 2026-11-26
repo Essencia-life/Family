@@ -3,17 +3,22 @@ import { query } from '$app/server';
 import * as v from 'valibot';
 import { db, must } from '#lib/server/db.ts';
 import { requireMember } from '#lib/server/guard.ts';
+import { thumbnails } from '#lib/video.ts';
 
 const PRACTICE = 'week, type, title, teacher, minutes, description, video_provider, video_id';
 
 /** Public teaser for the landing page: no videos, no descriptions. */
 export const getPreview = query(async () => {
 	const [practices, courses] = await Promise.all([
-		db.from('practices').select('week, type, title, teacher, minutes').order('week', { ascending: false }).limit(4),
+		db.from('practices').select('week, type, title, teacher, minutes, video_provider, video_id').order('week', { ascending: false }).limit(6),
 		db.from('courses').select('slug, title, duration, colors, creator, lessons(count)').order('position')
 	]);
 	return {
-		practices: must(practices),
+		// Visitors get thumbnails through /preview, never the video ids themselves.
+		practices: must(practices).map(({ video_provider, video_id, ...p }) => ({
+			...p,
+			thumbs: thumbnails({ video_provider, video_id }).map((t, i) => ({ ...t, url: `/preview/${p.week}/${i}` }))
+		})),
 		courses: must(courses).map(({ lessons, ...c }) => ({ ...c, lessonCount: lessons[0]?.count ?? 0 }))
 	};
 });
@@ -38,14 +43,20 @@ export const getPractice = query(v.pipe(v.number(), v.integer()), async (week) =
 export const getCourses = query(async () => {
 	const member = await requireMember();
 	const [courses, progress] = await Promise.all([
-		db.from('courses').select('slug, title, blurb, level, duration, colors, creator, lessons(id)').order('position'),
+		db
+			.from('courses')
+			.select('slug, title, blurb, level, duration, colors, creator, lessons(id, position, video_provider, video_id)')
+			.order('position')
+			.order('position', { referencedTable: 'lessons' }),
 		db.from('lesson_progress').select('lesson_id').eq('user_id', member.id)
 	]);
 	const done = new Set(must(progress).map((p) => p.lesson_id));
 	return must(courses).map(({ lessons, ...c }) => ({
 		...c,
 		lessonCount: lessons.length,
-		doneCount: lessons.filter((l) => done.has(l.id)).length
+		doneCount: lessons.filter((l) => done.has(l.id)).length,
+		// The card shows the first lesson that has a video.
+		video: lessons.find((l) => l.video_id) ?? null
 	}));
 });
 

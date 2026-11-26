@@ -16,32 +16,32 @@
 	const pct = $derived(percent(course.lessons.filter((l) => l.done).length, course.lessons.length));
 </script>
 
-<div class="px-6 py-8">
-	<div class="container">
-		<a href="/courses" class="text-[0.85rem] text-terra underline">&larr; All courses</a>
-		<div class="mt-4 grid gap-8 md:grid-cols-[1fr_300px]">
+<div class="py-8">
+	<div class="wrap">
+		<a href="/courses" class="link">&larr; All courses</a>
+		<div class="mt-5 grid gap-8 md:grid-cols-[1fr_310px]">
 			<div>
 				{#if lesson}
 					<Player video={lesson} title={lesson.title} colors={course.colors} svg={COURSE_SVG} />
-					<p class="eyebrow mt-6 mb-1">{course.title}</p>
-					<h1 class="h2 mb-3 text-2xl">Lesson {index + 1}: {lesson.title}</h1>
-					<p class="mb-5 text-[0.92rem] leading-[1.8] opacity-75">{lesson.body}</p>
+					<p class="eyebrow mt-9 mb-2">{course.title}</p>
+					<h1 class="display mb-3 text-3xl">Lesson {index + 1}: {lesson.title}</h1>
+					<p class="muted mb-6 leading-[1.8]">{lesson.body}</p>
 					<button
-						class="pill-btn bg-forest text-stone"
+						class="btn btn-amber"
 						disabled={setLessonDone.pending > 0}
 						onclick={() => setLessonDone({ slug: course.slug, lessonId: lesson.id, done: !lesson.done })}
 					>
 						{lesson.done ? '✓ Completed' : 'Mark lesson complete'}
 					</button>
 				{:else}
-					<h1 class="h2 text-2xl">{course.title}</h1>
-					<p class="mt-3 opacity-70">Lessons are on their way.</p>
+					<h1 class="display text-3xl">{course.title}</h1>
+					<p class="muted mt-3">Lessons are on their way.</p>
 				{/if}
 			</div>
 			<aside class="flex flex-col gap-4 self-start">
-			<div class="price p-3!">
-				<p class="px-2 py-2 font-display font-bold text-forest">{course.lessons.length} lessons · {course.duration}</p>
-				<div class="track mx-2 mb-2"><div class="fill" style="width:{pct}%"></div></div>
+			<div class="glass p-3!">
+				<p class="display px-3 pt-2 pb-2 text-lg">{course.lessons.length} lessons · {course.duration}</p>
+				<div class="track mx-3 mb-3"><div class="fill" style="width:{pct}%"></div></div>
 				{#each course.lessons as l, i (l.id)}
 					<a href="/courses/{course.slug}/{i + 1}" class="lesson" aria-current={i === index ? 'page' : undefined}>
 						<span class="tick" class:done={l.done}>✓</span><span>{i + 1}. {l.title}</span>
@@ -49,12 +49,12 @@
 				{/each}
 			</div>
 			{#if course.creator_url}
-				<div class="price p-5!">
-					<p class="font-display font-bold text-forest">Want to go deeper?</p>
-					<p class="mt-1 mb-3 text-[0.82rem] opacity-70">
+				<div class="glass glow">
+					<p class="display text-xl">Want to go deeper?</p>
+					<p class="muted mt-1 mb-4 text-[0.85rem]">
 						{course.creator ?? 'The creator'} offers the full course on their own website.
 					</p>
-					<a href={course.creator_url} class="pill-btn bg-amber py-2! text-brown" target="_blank" rel="noopener">Full course &nearr;</a>
+					<a href={course.creator_url} class="btn btn-amber btn-sm" target="_blank" rel="noopener">Full course &nearr;</a>
 				</div>
 			{/if}
 			</aside>

@@ -9,26 +9,26 @@
 	const art = $derived(ART[p.type] ?? ART.Yoga);
 </script>
 
-<div class="px-6 py-8">
-	<div class="container">
-		<a href="/practice" class="text-[0.85rem] text-terra underline">&larr; All practices</a>
-		<div class="mt-4"><Player video={p} title={p.title} colors={art.colors} svg={art.svg} /></div>
-		<div class="mt-8 grid gap-8 md:grid-cols-[1fr_280px]">
+<div class="py-8">
+	<div class="wrap">
+		<a href="/practice" class="link">&larr; All practices</a>
+		<div class="mt-5"><Player video={p} title={p.title} colors={art.colors} svg={art.svg} /></div>
+		<div class="mt-10 grid gap-8 md:grid-cols-[1fr_300px]">
 			<div>
 				<span class="chip">Week {p.week} · {p.type}</span>
-				<h1 class="h2 mt-3 mb-1 text-3xl">{p.title}</h1>
-				<p class="mb-4 text-[0.85rem] opacity-60">with {p.teacher} · {p.minutes} min</p>
-				<p class="mb-6 text-[0.95rem] leading-[1.8] opacity-80">{p.description}</p>
+				<h1 class="display mt-3 mb-1 text-3xl md:text-5xl">{p.title}</h1>
+				<p class="muted mb-5 text-[0.88rem]">with {p.teacher} · {p.minutes} min</p>
+				<p class="muted mb-7 leading-[1.8]">{p.description}</p>
 				<button
-					class="pill-btn bg-forest text-stone"
+					class="btn btn-amber"
 					disabled={setPractised.pending > 0}
 					onclick={() => setPractised({ week: p.week, done: !p.practised })}
 				>
 					{p.practised ? '✓ Practised' : 'Mark as practised'}
 				</button>
 			</div>
-			<div class="price">
-				<p class="mb-3 font-display font-bold text-forest">Before you start</p>
+			<div class="glass self-start">
+				<p class="display mb-3 text-xl">Before you start</p>
 				<ul class="ticks flex flex-col gap-1.5">
 					<li>A quiet corner and a mat or blanket</li>
 					<li>Comfortable clothes</li>
@@ -37,9 +37,9 @@
 				</ul>
 			</div>
 		</div>
-		<div class="mt-10 flex justify-between border-t border-moss/20 pt-5 text-[0.85rem]">
-			{#if older}<a class="text-terra underline" href="/practice/{older.week}">&larr; Week {older.week}: {older.title}</a>{:else}<span></span>{/if}
-			{#if newer}<a class="text-terra underline" href="/practice/{newer.week}">Week {newer.week}: {newer.title} &rarr;</a>{/if}
+		<div class="mt-12 flex justify-between border-t border-white/10 pt-5">
+			{#if older}<a class="link" href="/practice/{older.week}">&larr; Week {older.week}: {older.title}</a>{:else}<span></span>{/if}
+			{#if newer}<a class="link" href="/practice/{newer.week}">Week {newer.week}: {newer.title} &rarr;</a>{/if}
 		</div>
 	</div>
 </div>

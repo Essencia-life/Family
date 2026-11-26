@@ -6,30 +6,31 @@
 	let { children, data }: LayoutProps = $props();
 	const user = $derived(data.session?.user);
 	const nav = [
-		['/home', 'Home'],
+		['/', 'Home'],
 		['/practice', 'Practice'],
 		['/courses', 'Courses'],
 		['/community', 'Community']
 	];
-	const current = (href: string) => (page.url.pathname.startsWith(href) ? 'page' : undefined);
+	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
 </script>
 
 <svelte:head>
 	<title>Essência Family</title>
 </svelte:head>
 
-<header class="sticky top-0 z-30 border-b border-moss/15 bg-stone/85 backdrop-blur">
-	<div class="container flex h-16 items-center justify-between">
-		<a href={user ? '/home' : '/'} class="font-display text-xl font-medium text-forest">Essência <span class="text-amber">Family</span></a>
+<header class="top">
+	<div class="wrap flex h-16 items-center justify-between gap-4">
+		<a href="/" class="logo shrink-0 whitespace-nowrap"><span class="orb"></span><span>Essência <i>Family</i></span></a>
 		{#if user}
-			<nav class="flex items-center gap-5">
+			<!-- Scrolls sideways on phones instead of widening the page. -->
+			<nav class="flex min-w-0 items-center gap-4 overflow-x-auto whitespace-nowrap md:gap-5" style="scrollbar-width:none">
 				{#each nav as [href, label] (href)}
 					<a {href} class="nav-link" aria-current={current(href)}>{label}</a>
 				{/each}
 				{#if data.maintainer}<a href="/admin" class="nav-link" aria-current={current('/admin')}>Admin</a>{/if}
 				<a
 					href="/account"
-					class="flex h-8 w-8 items-center justify-center rounded-full bg-moss font-display text-[0.8rem] font-bold text-stone"
+					class="orb flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[0.8rem] font-bold text-[#241a08]"
 					aria-label="Account"
 					aria-current={current('/account')}>{(user.name || user.email || '?')[0].toUpperCase()}</a
 				>
@@ -37,8 +38,8 @@
 		{:else}
 			<nav class="flex items-center gap-6">
 				<a href="/#pricing" class="nav-link hidden md:inline">Membership</a>
-				<a href="/auth/signin?callbackUrl=/home" class="nav-link">Log in</a>
-				<a href="/#pricing" class="pill-btn bg-forest px-5! py-2! text-stone">Join the Family</a>
+				<a href="/auth/signin?callbackUrl=/" class="nav-link">Log in</a>
+				<a href="/#pricing" class="btn btn-amber btn-sm">Join the Family</a>
 			</nav>
 		{/if}
 	</div>
@@ -48,4 +49,4 @@
 	{@render children()}
 </main>
 
-<p class="py-10 text-center text-[0.8rem] text-brown/40 italic">Essência Cooperativa · Aljezur, Portugal · essencia.life</p>
+<p class="py-12 text-center text-[0.8rem] text-ink/40 italic">Essência Cooperativa · Aljezur, Portugal · essencia.life</p>

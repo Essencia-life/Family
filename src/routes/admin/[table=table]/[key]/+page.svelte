@@ -11,10 +11,10 @@
 	const attrs = (f: Field) => saveRow.fields[f.name].as('text', toInput(f, row[f.name]) || (f.options?.[0] ?? ''));
 </script>
 
-<a href="/admin/{table}" class="text-[0.85rem] underline opacity-70">← {r.label}</a>
-<h1 class="h2 mt-2 mb-6 text-3xl">{key ? 'Edit' : 'New'}</h1>
+<a href="/admin/{table}" class="text-[0.85rem] underline muted">← {r.label}</a>
+<h1 class="display mt-2 mb-6 text-3xl">{key ? 'Edit' : 'New'}</h1>
 
-<form class="price grid max-w-2xl gap-4 text-[0.85rem]" {...saveRow}>
+<form class="glass grid max-w-2xl gap-4 text-[0.85rem]" {...saveRow}>
 	<input {...saveRow.fields._table.as('hidden', table)} />
 	<input {...saveRow.fields._key.as('hidden', key)} />
 	{#each r.fields as f (f.name)}
@@ -35,5 +35,5 @@
 		</label>
 	{/each}
 	{#each saveRow.fields.issues() ?? [] as issue (issue.message)}<p class="issue">{issue.message}</p>{/each}
-	<div><button class="pill-btn bg-forest text-stone" disabled={saveRow.pending > 0}>Save</button></div>
+	<div><button class="btn btn-amber btn-sm" disabled={saveRow.pending > 0}>Save</button></div>
 </form>

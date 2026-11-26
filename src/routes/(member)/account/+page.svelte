@@ -7,29 +7,29 @@
 	const renews = $derived(m?.renews_on && new Date(m.renews_on).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }));
 </script>
 
-<div class="px-6 py-10">
-	<div class="container max-w-2xl">
-		<p class="eyebrow mb-1">Account</p>
-		<h1 class="h2 mb-8 text-3xl">Your membership.</h1>
+<div class="py-10">
+	<div class="wrap max-w-2xl!">
+		<p class="eyebrow mb-2">Account</p>
+		<h1 class="display mb-8 text-4xl">Your <span class="accent">membership.</span></h1>
 
-		<div class="price best mb-5">
+		<div class="glass glow mb-5">
 			{#if m}
 				<div class="flex flex-wrap items-center justify-between gap-3">
 					<div>
-						<p class="font-display text-lg font-bold text-forest">Essência Family, {m.plan}</p>
-						{#if renews}<p class="text-[0.85rem] opacity-70">Renews on {renews} · €{m.plan === 'yearly' ? PRICES.yearly : PRICES.monthly}</p>{/if}
+						<p class="display text-xl">Essência Family, {m.plan}</p>
+						{#if renews}<p class="muted text-[0.85rem]">Renews on {renews} · €{m.plan === 'yearly' ? PRICES.yearly : PRICES.monthly}</p>{/if}
 					</div>
 					<span class="chip">{m.status.replace('_', ' ')}</span>
 				</div>
 			{:else}
 				<!-- shortcut: billing buttons appear once payments are connected. -->
-				<p class="font-display text-lg font-bold text-forest">Remember member</p>
-				<p class="text-[0.85rem] opacity-70">Payments are not set up yet, so your access is free for now.</p>
+				<p class="display text-xl">Remember member</p>
+				<p class="muted text-[0.85rem]">Payments are not set up yet, so your access is free for now.</p>
 			{/if}
 		</div>
 
-		<form class="price mb-5" {...updateName}>
-			<p class="mb-3 font-display font-bold text-forest">Your details</p>
+		<form class="glass mb-5" {...updateName}>
+			<p class="display mb-3 text-xl">Your details</p>
 			<div class="grid gap-3 text-[0.85rem] md:grid-cols-2">
 				<label class="flex flex-col gap-1">
 					Name
@@ -42,11 +42,11 @@
 				</label>
 			</div>
 			<div class="mt-4 flex items-center gap-3">
-				<button class="pill-btn bg-forest text-stone" disabled={updateName.pending > 0}>Save</button>
-				{#if updateName.result?.saved}<span class="text-[0.8rem] opacity-70">Saved</span>{/if}
+				<button class="btn btn-amber btn-sm" disabled={updateName.pending > 0}>Save</button>
+				{#if updateName.result?.saved}<span class="muted text-[0.8rem]">Saved</span>{/if}
 			</div>
 		</form>
 
-		<a href="/auth/signout" class="text-[0.85rem] text-terra underline">Log out</a>
+		<a href="/auth/signout" class="link">Log out</a>
 	</div>
 </div>

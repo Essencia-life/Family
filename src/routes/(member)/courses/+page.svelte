@@ -5,14 +5,14 @@
 	const courses = $derived(await getCourses());
 </script>
 
-<div class="px-6 py-10">
-	<div class="container">
-		<p class="eyebrow mb-1">Intro classes</p>
-		<h1 class="h2 mb-2 text-3xl">Learn from our creators.</h1>
-		<p class="mb-8 text-[0.92rem] opacity-70">
+<div class="py-10">
+	<div class="wrap">
+		<p class="eyebrow mb-2">Intro classes</p>
+		<h1 class="display mb-3 text-4xl md:text-5xl">Learn from <span class="accent">our creators.</span></h1>
+		<p class="muted mb-9 max-w-2xl">
 			Short intro classes, at your own pace. We remember where you stopped. If you want to go deeper, each creator offers the full course on their own website.
 		</p>
-		<div class="grid gap-5 md:grid-cols-2">
+		<div class="grid gap-6 md:grid-cols-2">
 			{#each courses as course (course.slug)}<CourseCard {course} />{/each}
 		</div>
 	</div>

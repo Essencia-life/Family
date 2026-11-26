@@ -17,37 +17,37 @@
 </script>
 
 <div class="mb-6 flex items-center justify-between gap-4">
-	<h1 class="h2 text-3xl">{r.label}</h1>
-	<a href="/admin/{table}/new" class="pill-btn bg-forest text-stone">New</a>
+	<h1 class="display text-3xl">{r.label}</h1>
+	<a href="/admin/{table}/new" class="btn btn-amber btn-sm">New</a>
 </div>
 
 {#if rows.length}
 	<div class="overflow-x-auto">
 		<table class="w-full text-left text-[0.85rem]">
 			<thead>
-				<tr class="border-b border-moss/25">
+				<tr class="border-b border-white/15">
 					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display">{r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each rows as { key, row } (key)}
-					<tr class="border-b border-moss/10">
+					<tr class="border-b border-white/8">
 						{#each r.columns as column (column)}
 							<td class="py-2 pr-4">
 								{#if column === r.columns[0] || column === 'title'}
-									<a href="/admin/{table}/{encodeURIComponent(key)}" class="text-forest underline">{cell(column, row[column]) || '(empty)'}</a>
+									<a href="/admin/{table}/{encodeURIComponent(key)}" class="text-stone underline">{cell(column, row[column]) || '(empty)'}</a>
 								{:else}
 									{cell(column, row[column])}
 								{/if}
 							</td>
 						{/each}
-						<td class="py-2 text-right"><button class="text-terra underline" onclick={() => remove(key)}>Delete</button></td>
+						<td class="py-2 text-right"><button class="text-glow underline" onclick={() => remove(key)}>Delete</button></td>
 					</tr>
 				{/each}
 			</tbody>
 		</table>
 	</div>
 {:else}
-	<p class="opacity-70">Nothing here yet.</p>
+	<p class="muted">Nothing here yet.</p>
 {/if}

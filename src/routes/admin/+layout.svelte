@@ -5,8 +5,8 @@
 	let { children } = $props();
 </script>
 
-<div class="px-6 py-10">
-	<div class="container grid gap-8 md:grid-cols-[12rem_1fr]">
+<div class="py-10">
+	<div class="wrap grid gap-8 md:grid-cols-[12rem_1fr]">
 		<nav class="flex flex-wrap gap-2 md:flex-col">
 			<a href="/admin" class="eyebrow mb-2">Back-office</a>
 			{#each Object.entries(RESOURCES) as [name, r] (name)}
