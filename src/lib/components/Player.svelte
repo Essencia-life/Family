@@ -85,8 +85,6 @@
 	<div class="glowbg" style={gradient(colors)}></div>
 	<div class="video" class:fs={fullscreen} style={gradient(colors)} bind:this={stage}>
 		{#if src}
-			<!-- Poster while YouTube loads; the iframe paints over it once ready. -->
-			<Cover thumbs={thumbnails(video)} />
 			<iframe
 				bind:this={iframe}
 				{src}
@@ -96,10 +94,14 @@
 			></iframe>
 			{#if custom}
 				{#if !started}
-					<!-- Before the first play, taps in the middle reach YouTube itself (iOS only starts playback that way);
-					     the bands hide and block its title bar and logo. -->
-					<div class="shield top-0 h-[24%] bg-gradient-to-b from-black/90 to-black/0"></div>
-					<div class="shield bottom-0 h-[22%] bg-gradient-to-t from-black/90 to-black/0"></div>
+					<!-- Until the first play our poster covers YouTube's start screen. It lets clicks through, so a tap in the
+					     middle starts the video in YouTube itself (iOS only allows that); the clear bands block its title and logo. -->
+					<div class="poster">
+						<Cover thumbs={thumbnails(video)} />
+						<span class="bigplay"><PlayIcon size={30} /></span>
+					</div>
+					<div class="shield top-0 h-[24%]"></div>
+					<div class="shield bottom-0 h-[22%]"></div>
 				{:else}
 					<button class="shield inset-0 cursor-pointer" aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
 						{#if ended}
