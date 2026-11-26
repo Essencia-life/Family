@@ -6,12 +6,14 @@
 	const table = $derived(page.params.table!);
 	const key = $derived(page.params.key === 'new' ? '' : page.params.key!);
 	const r = $derived(RESOURCES[table]);
-	const row = $derived(key ? await getRow({ table, key }) : {});
+	// A new entry can be prefilled from the link, e.g. ?course_slug=permaculture&position=4.
+	const row = $derived(key ? await getRow({ table, key }) : Object.fromEntries(page.url.searchParams));
+	const back = $derived(r.parent?.table ?? table);
 	const types = { text: 'text', textarea: 'text', number: 'number', date: 'date', datetime: 'datetime-local', url: 'url', select: 'text', list: 'text' };
 	const attrs = (f: Field) => saveRow.fields[f.name].as('text', toInput(f, row[f.name]) || (f.options?.[0] ?? ''));
 </script>
 
-<a href="/admin/{table}" class="text-[0.85rem] underline muted">← {r.label}</a>
+<a href="/admin/{back}" class="text-[0.85rem] underline muted">← {RESOURCES[back].label}</a>
 <h1 class="display mt-2 mb-6 text-3xl">{key ? 'Edit' : 'New'}</h1>
 
 <form class="glass grid max-w-2xl gap-4 text-[0.85rem]" {...saveRow}>
