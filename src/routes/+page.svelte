@@ -28,9 +28,8 @@
 	];
 
 	let scrollY = $state(0);
-	let root: HTMLElement;
 	// Scroll reveal: only hide content once JavaScript is there to show it again.
-	$effect(() => {
+	const reveal = (root: HTMLElement) => {
 		root.classList.add('reveal');
 		const io = new IntersectionObserver(
 			(es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add('in'), io.unobserve(e.target))),
@@ -38,12 +37,12 @@
 		);
 		root.querySelectorAll('.rv').forEach((el) => io.observe(el));
 		return () => io.disconnect();
-	});
+	};
 </script>
 
 <svelte:window bind:scrollY />
 
-<div bind:this={root}>
+<div {@attach reveal}>
 	<section class="hero">
 		<div class="stars" aria-hidden="true">
 			{#each stars as s, i (i)}<span style="left:{s.x}%;top:{s.y}%;animation-delay:{s.d}s"></span>{/each}

@@ -19,17 +19,18 @@
 </svelte:head>
 
 <header class="top">
-	<div class="wrap flex h-16 items-center justify-between">
-		<a href={user ? '/home' : '/'} class="logo"><span class="orb"></span><span>Essência <i>Family</i></span></a>
+	<div class="wrap flex h-16 items-center justify-between gap-4">
+		<a href={user ? '/home' : '/'} class="logo shrink-0 whitespace-nowrap"><span class="orb"></span><span>Essência <i>Family</i></span></a>
 		{#if user}
-			<nav class="flex items-center gap-5">
+			<!-- Scrolls sideways on phones instead of widening the page. -->
+			<nav class="flex min-w-0 items-center gap-4 overflow-x-auto whitespace-nowrap md:gap-5" style="scrollbar-width:none">
 				{#each nav as [href, label] (href)}
 					<a {href} class="nav-link" aria-current={current(href)}>{label}</a>
 				{/each}
 				{#if data.maintainer}<a href="/admin" class="nav-link" aria-current={current('/admin')}>Admin</a>{/if}
 				<a
 					href="/account"
-					class="orb flex h-8 w-8 items-center justify-center rounded-full font-display text-[0.8rem] font-bold text-[#241a08]"
+					class="orb flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-[0.8rem] font-bold text-[#241a08]"
 					aria-label="Account"
 					aria-current={current('/account')}>{(user.name || user.email || '?')[0].toUpperCase()}</a
 				>

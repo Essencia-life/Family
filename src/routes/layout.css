@@ -101,12 +101,12 @@ body::before {
 	/* cards */
 	.thumb { position: relative; overflow: hidden; aspect-ratio: 16/10; border-radius: 20px 6px 20px 6px; border: 1px solid rgba(252, 250, 244, 0.14); }
 	.thumb.p { aspect-ratio: 3/4; }
-	.thumb > svg, .video > svg, .feature > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-	.thumb > svg { transition: transform 0.8s; }
+	.thumb > svg:first-child, .video > svg, .feature > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+	.thumb > svg:first-child { transition: transform 0.8s; }
 	.thumb::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8, 12, 9, 0.6), transparent 55%); pointer-events: none; }
 	.card { display: block; transition: transform 0.35s; }
 	.card:hover { transform: translateY(-5px); }
-	.card:hover .thumb > svg { transform: scale(1.1); }
+	.card:hover .thumb > svg:first-child { transform: scale(1.1); }
 	.card:hover .thumb { border-color: rgba(232, 180, 85, 0.6); box-shadow: 0 18px 50px rgba(232, 180, 85, 0.18); }
 	.wk-num { position: absolute; z-index: 2; left: 14px; bottom: 4px; font-family: var(--font-display); font-size: 5.2rem; font-weight: 700; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(252, 250, 244, 0.7); }
 	.play { position: absolute; z-index: 2; right: 12px; bottom: 12px; width: 42px; height: 42px; border-radius: 50%; background: rgba(252, 250, 244, 0.92); display: flex; align-items: center; justify-content: center; color: var(--color-forest); transition: transform 0.3s; }
