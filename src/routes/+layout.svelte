@@ -31,7 +31,8 @@
 	});
 	// Lets the server greet by the member's local time (see greeting.ts).
 	$effect(() => {
-		document.cookie = `tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}; path=/; max-age=31536000; samesite=lax`;
+		// Browsers without the Cookie Store API simply keep the Lisbon fallback.
+		globalThis.cookieStore?.set({ name: 'tz', value: Intl.DateTimeFormat().resolvedOptions().timeZone, path: '/', expires: Date.now() + 365 * 864e5, sameSite: 'lax' });
 	});
 	const closeMenu = () => document.getElementById('menu')?.hidePopover();
 	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
