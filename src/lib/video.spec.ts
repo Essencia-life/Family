@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { embedUrl, thumbnailUrl } from './video';
+import { embedUrl, thumbnails } from './video';
 
 describe('embedUrl', () => {
 	it('builds a privacy-friendly YouTube embed', () => {
@@ -11,9 +11,12 @@ describe('embedUrl', () => {
 		expect(embedUrl({ video_provider: 'youtube', video_id: null })).toBeNull();
 	});
 	it('builds the YouTube thumbnail, or null without a video', () => {
-		expect(thumbnailUrl({ video_provider: 'youtube', video_id: 'abc_123' })).toBe('https://i.ytimg.com/vi/abc_123/hqdefault.jpg');
-		expect(thumbnailUrl({ video_provider: 'youtube', video_id: null })).toBeNull();
-		expect(thumbnailUrl(undefined)).toBeNull();
+		expect(thumbnails({ video_provider: 'youtube', video_id: 'abc_123' }).map((t) => t.url)).toEqual([
+			'https://i.ytimg.com/vi/abc_123/maxresdefault.jpg',
+			'https://i.ytimg.com/vi/abc_123/hqdefault.jpg'
+		]);
+		expect(thumbnails({ video_provider: 'youtube', video_id: null })).toEqual([]);
+		expect(thumbnails(undefined)).toEqual([]);
 	});
 	it('refuses unknown providers', () => {
 		expect(() => embedUrl({ video_provider: 'nope', video_id: 'x' })).toThrow('Unknown video provider');

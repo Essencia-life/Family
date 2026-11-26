@@ -1,11 +1,17 @@
 /** A video as stored in the database: which provider hosts it, and its id there. */
 export type Video = { video_provider: string; video_id: string | null };
+/** A preview image. Letterboxed ones have black bars around a 16:9 picture that the page crops away. */
+export type Thumbnail = { url: string; letterboxed: boolean };
 
 // To switch or add a host, add an entry here and set `video_provider` on the rows that use it.
-const providers: Record<string, { embed: (id: string) => string; thumbnail: (id: string) => string }> = {
+const providers: Record<string, { embed: (id: string) => string; thumbnails: (id: string) => Thumbnail[] }> = {
 	youtube: {
 		embed: (id) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0`,
-		thumbnail: (id) => `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`
+		// maxresdefault is sharp but missing on some videos; hqdefault always exists.
+		thumbnails: (id) => [
+			{ url: `https://i.ytimg.com/vi/${encodeURIComponent(id)}/maxresdefault.jpg`, letterboxed: false },
+			{ url: `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg`, letterboxed: true }
+		]
 	}
 };
 
@@ -20,7 +26,7 @@ export function embedUrl(video: Video): string | null {
 	return video.video_id ? provider(video).embed(video.video_id) : null;
 }
 
-/** The preview image for a video, or null while it has no id yet. */
-export function thumbnailUrl(video: Partial<Video> | null | undefined): string | null {
-	return video?.video_id && video.video_provider ? provider(video as Video).thumbnail(video.video_id) : null;
+/** Preview images for a video, best first, or none while it has no id yet. */
+export function thumbnails(video: Partial<Video> | null | undefined): Thumbnail[] {
+	return video?.video_id && video.video_provider ? provider(video as Video).thumbnails(video.video_id) : [];
 }
