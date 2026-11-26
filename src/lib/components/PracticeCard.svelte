@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { ART } from '#lib/content.ts';
+	import { ART, formatSession } from '#lib/content.ts';
 	import PlayIcon from './PlayIcon.svelte';
 	import Thumb from './Thumb.svelte';
 	import type { Thumbnail } from '#lib/video.ts';
 
-	type Practice = { id: string; week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean; video_provider?: string; video_id?: string | null; thumbs?: Thumbnail[] };
+	type Practice = { id: string; week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean; video_provider?: string; video_id?: string | null; thumbs?: Thumbnail[]; planned?: boolean; starts_at?: string | null };
 	let { practice: p, locked = false }: { practice: Practice; locked?: boolean } = $props();
 	const art = $derived(ART[p.type] ?? ART.Yoga);
 </script>
 
 <a href={locked ? '/#pricing' : `/practice/${p.id}`} class="card">
 	<Thumb colors={art.colors} svg={art.svg} video={p} thumbs={p.thumbs} portrait>
-		<span class="chip on-img">{p.type}</span>
+		<span class="chip on-img">{p.planned ? `Live · ${p.type}` : p.type}</span>
 		<span class="wk-num">{p.week}</span>
 		{#if locked}
 			<div class="lock">
@@ -23,7 +23,7 @@
 			<span class="play"><PlayIcon /></span>
 		{/if}
 	</Thumb>
-	<p class="meta">{p.minutes} min · with {p.teacher}</p>
+	<p class="meta">{p.planned && p.starts_at ? formatSession(p.starts_at) : `${p.minutes} min · with ${p.teacher}`}</p>
 	<p class="ttl">{p.title}</p>
 	{#if p.practised}<p class="muted text-[0.74rem]">✓ practised</p>{/if}
 </a>

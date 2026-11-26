@@ -31,7 +31,7 @@
 		<div class="mb-8 flex flex-wrap items-end justify-between gap-6">
 			<div>
 				<p class="eyebrow mb-2">Good morning</p>
-				<h1 class="display text-4xl md:text-5xl">This week's <span class="accent">practice.</span></h1>
+				<h1 class="display text-4xl md:text-5xl">Last morning <span class="accent">practice.</span></h1>
 			</div>
 			<div>
 				<p class="meta mt-0! mb-2">Your mornings · last 7 days</p>
@@ -45,7 +45,7 @@
 			<a href="/practice/{latest.id}" class="feature card" style={gradient(art.colors)}>
 				<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html art.svg}</svg>
 				<Cover thumbs={thumbnails(latest)} />
-				<span class="chip mb-3 self-start bg-stone/20! text-stone!">New · Week {latest.week} · {latest.type}</span>
+				<span class="chip mb-3 self-start bg-black/50! text-stone! backdrop-blur-sm">New · Week {latest.week} · {latest.type}</span>
 				<p class="display mb-2 text-4xl md:text-6xl">{latest.title}</p>
 				<p class="mb-6 text-stone/85">with {latest.teacher} · {latest.minutes} min</p>
 				<span class="flex items-center gap-4"><span class="bigplay"><PlayIcon size={26} /></span><span class="font-accent text-[1.3rem] italic">Begin practice</span></span>
