@@ -42,7 +42,6 @@
 			<a href="/practice/{latest.week}" class="feature card" style={gradient(art.colors)}>
 				<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html art.svg}</svg>
 				<Cover thumbs={thumbnails(latest)} />
-				<span class="orb-big"></span>
 				<span class="chip mb-3 self-start bg-stone/20! text-stone!">New · Week {latest.week} · {latest.type}</span>
 				<p class="display mb-2 text-4xl md:text-6xl">{latest.title}</p>
 				<p class="mb-6 text-stone/85">with {latest.teacher} · {latest.minutes} min</p>
