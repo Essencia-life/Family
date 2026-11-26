@@ -13,16 +13,22 @@ import {
 } from '$app/env/private';
 
 // Users, accounts and sessions live in the `next_auth` schema in Supabase (see supabase/migrations).
+const providers = [
+	...(RESEND_API_KEY
+		? [Resend({ name: 'Email', apiKey: RESEND_API_KEY, from: AUTH_EMAIL_FROM ?? 'Essência Family <no-reply@essencia.family>' })]
+		: []),
+	...(AUTH_GOOGLE_ID ? [Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET })] : [])
+];
+/** Ids of the configured providers, so the login page only shows what works. */
+export const providerIds = providers.map((p) => p.id);
+
 export const { handle, signIn, signOut } = SvelteKitAuth({
 	secret: AUTH_SECRET,
 	trustHost: true,
 	adapter: SupabaseAdapter({ url: SUPABASE_URL, secret: SUPABASE_SERVICE_ROLE_KEY }),
-	providers: [
-		...(RESEND_API_KEY
-			? [Resend({ name: 'Email', apiKey: RESEND_API_KEY, from: AUTH_EMAIL_FROM ?? 'Essência Family <no-reply@essencia.family>' })]
-			: []),
-		...(AUTH_GOOGLE_ID ? [Google({ clientId: AUTH_GOOGLE_ID, clientSecret: AUTH_GOOGLE_SECRET })] : [])
-	],
+	providers,
+	// Our own pages in the app's look instead of the default Auth.js UI (src/routes/login).
+	pages: { signIn: '/login', verifyRequest: '/login/check-email', error: '/login/error' },
 	callbacks: {
 		session({ session, user }) {
 			session.user.id = user.id;
