@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { ART, THREAD_CATEGORIES } from '#lib/content.ts';
 	import { formatDay } from '#lib/moon.ts';
 	import Moon from '#lib/components/Moon.svelte';
@@ -18,10 +19,24 @@
 		await Promise.all([getCircles(), getMoonRecordings(), getRecordings(), getThreads()])
 	);
 	let writing = $state(false);
+	let topic = $state<string>('All');
+	const shown = $derived(topic === 'All' ? threads : threads.filter((t) => t.category === topic));
+	const me = $derived(page.data.session?.user?.name || 'You');
+	// A stable soft colour per name for the initial avatars.
+	const hue = (name: string) => `a${[...name].reduce((n, c) => n + c.charCodeAt(0), 0) % 5}`;
+	const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+	const ago = (iso: string) => {
+		const days = Math.round((Date.parse(iso) - Date.now()) / 864e5);
+		if (days <= -7) return date(iso);
+		if (days < 0) return rtf.format(days, 'day');
+		const hours = Math.round((Date.parse(iso) - Date.now()) / 36e5);
+		return hours < 0 ? rtf.format(hours, 'hour') : 'just now';
+	};
 
 	function shareReflection() {
 		writing = true;
 		createThread.fields.category.set('New moon reflections');
+		topic = 'All';
 		document.getElementById('exchange')?.scrollIntoView({ behavior: 'smooth' });
 	}
 	const daysTo = (day: string) => Math.max(0, Math.round((Date.parse(day + 'T19:00:00Z') - Date.now()) / 864e5));
@@ -98,15 +113,20 @@
 		</div>
 		{/if}
 
-		<div id="exchange" class="mt-14 mb-3 flex scroll-mt-20 flex-wrap items-end justify-between gap-3">
-			<h2 class="display text-2xl md:text-3xl">The exchange</h2>
-			<button class="btn btn-light btn-sm" onclick={() => (writing = !writing)}>Start a conversation</button>
+		<div id="exchange" class="mt-14 mb-2 scroll-mt-20">
+			<h2 class="display text-2xl md:text-3xl">The <span class="accent">exchange.</span></h2>
 		</div>
 		<p class="muted mb-5 text-[0.88rem]">What did you notice in practice? What are you learning? Ask, answer and encourage each other.</p>
 
+		<div class="mb-4 flex flex-wrap gap-2">
+			{#each ['All', ...THREAD_CATEGORIES] as c (c)}
+				<button class="pill" aria-pressed={topic === c} onclick={() => (topic = c)}>{c}</button>
+			{/each}
+		</div>
+
 		{#if writing}
 			<form
-				class="glass mb-5 flex flex-col gap-3"
+				class="glass mb-4 flex flex-col gap-3"
 				{...createThread.enhance(async ({ submit, element }) => {
 					if (await submit()) {
 						element.reset();
@@ -121,20 +141,50 @@
 				{#each createThread.fields.title.issues() ?? [] as issue (issue.message)}<p class="issue">{issue.message}</p>{/each}
 				<textarea class="field" rows="3" placeholder="What is on your mind?" {...createThread.fields.body.as('text')}></textarea>
 				{#each createThread.fields.body.issues() ?? [] as issue (issue.message)}<p class="issue">{issue.message}</p>{/each}
-				<button class="btn btn-amber btn-sm self-start" disabled={createThread.pending > 0}>Post</button>
+				<div class="flex gap-2">
+					<button class="btn btn-amber btn-sm" disabled={createThread.pending > 0}>Post</button>
+					<button type="button" class="btn btn-ghost btn-sm" onclick={() => (writing = false)}>Cancel</button>
+				</div>
 			</form>
+		{:else}
+			<button class="glass compose mb-4" onclick={() => (writing = true)}>
+				<span class="av {hue(me)}">{me[0]}</span>
+				<span class="flex-1 text-left font-accent text-[1.2rem] text-ink/50 italic">What is on your mind today?</span>
+				<span class="btn btn-amber btn-sm">Share</span>
+			</button>
 		{/if}
 
-		<div class="flex flex-col gap-3">
-			{#each threads as t (t.id)}
+		<div class="grid gap-4 md:grid-cols-2">
+			{#each shown as t (t.id)}
 				{@const reply = replyToThread.for(t.id)}
-				<details class="glass py-4!">
-					<summary class="flex flex-wrap items-center gap-3">
-						<span class="chip">{t.category}</span>
-						<span class="display text-[1.15rem] text-stone">{t.title}</span>
-						<span class="muted ml-auto text-[0.75rem]">{t.author_name} · {t.replies.length} {t.replies.length === 1 ? 'reply' : 'replies'}</span>
+				{@const last = t.replies.at(-1)}
+				<details class="glass post">
+					<summary class="flex flex-col gap-3">
+						<span class="flex items-center gap-3">
+							<span class="av {hue(t.author_name)}">{t.author_name[0]}</span>
+							<span class="flex flex-col">
+								<b class="display text-[0.95rem] text-stone">{t.author_name}</b>
+								<span class="muted text-[0.72rem]">{ago(t.created_at)}</span>
+							</span>
+							<span class="chip ml-auto">{t.category}</span>
+						</span>
+						<span class="display text-[1.3rem] text-stone">{t.title}</span>
+						<span class="excerpt muted text-[0.9rem] leading-[1.65] whitespace-pre-line">{t.body}</span>
+						<span class="last mt-auto flex items-center gap-3 text-[0.78rem]">
+							{#if last}
+								<span class="flex">
+									{#each [...new Set(t.replies.map((r) => r.author_name))].slice(0, 3) as name (name)}
+										<span class="av sm {hue(name)}">{name[0]}</span>
+									{/each}
+								</span>
+								<span class="muted line-clamp-1">
+									{t.replies.length} {t.replies.length === 1 ? 'reply' : 'replies'} · {last.author_name}: “{last.body}”
+								</span>
+							{:else}
+								<span class="muted italic">No replies yet · be the first</span>
+							{/if}
+						</span>
 					</summary>
-					<p class="muted mt-3 text-[0.92rem] leading-[1.75] whitespace-pre-line">{t.body}</p>
 					{#each t.replies as r (r.id)}
 						<p class="mt-3 border-l-2 border-amber/70 pl-4 text-[0.86rem] leading-[1.7] whitespace-pre-line">
 							<b class="font-display text-stone">{r.author_name}</b>
@@ -152,7 +202,29 @@
 						<button class="btn btn-amber btn-sm" disabled={reply.pending > 0}>Reply</button>
 					</form>
 				</details>
+			{:else}
+				<p class="muted italic">Nothing here yet. Start the first conversation.</p>
 			{/each}
 		</div>
 	</div>
 </div>
+
+<style>
+	.pill { font-size: 0.78rem; padding: 0.4rem 0.9rem; border-radius: 20px; border: 1px solid rgba(252, 250, 244, 0.18); color: rgba(239, 234, 219, 0.8); transition: all 0.2s; }
+	.pill:hover { color: var(--color-stone); }
+	.pill[aria-pressed='true'] { background: rgba(232, 180, 85, 0.16); border-color: rgba(232, 180, 85, 0.5); color: var(--color-glow); }
+	.compose { display: flex; width: 100%; align-items: center; gap: 0.9rem; padding: 1rem 1.2rem; }
+	.compose:hover { border-color: rgba(232, 180, 85, 0.4); }
+	.post summary { list-style: none; cursor: pointer; }
+	.post:not([open]) summary { height: 100%; }
+	.post[open] .last { display: none; }
+	.post summary::-webkit-details-marker { display: none; }
+	.post:hover { border-color: rgba(232, 180, 85, 0.35); }
+	/* An opened post spans the whole row and shows its full text. */
+	.post[open] { grid-column: 1 / -1; }
+	.post:not([open]) .excerpt { display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+	.av { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font: 700 0.8rem var(--font-display); color: #241a08; border: 2px solid var(--color-night); text-transform: uppercase; }
+	.av.sm { width: 26px; height: 26px; font-size: 0.65rem; margin-left: -8px; }
+	.av.sm:first-child { margin-left: 0; }
+	.a0 { background: #e8b455; } .a1 { background: #9fb38a; } .a2 { background: #8fb6c2; } .a3 { background: #d9a68a; } .a4 { background: #c9b8e0; }
+</style>
