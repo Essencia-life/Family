@@ -9,7 +9,7 @@
 	const preview = $derived(await getPreview());
 	const latest = $derived(preview.practices[0]);
 	// shortcut: join buttons go to sign-in until payments are decided; then they start checkout.
-	const join = '/auth/signin?callbackUrl=/';
+	const join = '/login?callbackUrl=/';
 	const faq = [
 		['What does "remember member" mean?', 'We see healing as remembering, revealing and blossoming, not as fixing something that is wrong. As a member you remember who you already are, together with others.'],
 		['Do I need experience?', 'No. Every practice is made for mixed levels, and the intro classes start from the beginning.'],

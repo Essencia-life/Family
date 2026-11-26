@@ -47,6 +47,9 @@
 			</div>
 		</form>
 
-		<a href="/auth/signout" class="link">Log out</a>
+		<form method="POST" action="?/logout">
+			<input type="hidden" name="redirectTo" value="/" />
+			<button class="link cursor-pointer">Log out</button>
+		</form>
 	</div>
 </div>
