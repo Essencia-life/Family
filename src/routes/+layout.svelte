@@ -26,6 +26,7 @@
 				{#each nav as [href, label] (href)}
 					<a {href} class="nav-link" aria-current={current(href)}>{label}</a>
 				{/each}
+				{#if data.maintainer}<a href="/admin" class="nav-link" aria-current={current('/admin')}>Admin</a>{/if}
 				<a
 					href="/account"
 					class="flex h-8 w-8 items-center justify-center rounded-full bg-moss font-display text-[0.8rem] font-bold text-stone"
