@@ -15,6 +15,9 @@
 		return field ? toInput(field, value).replace('T', ' ') : String(value ?? '');
 	};
 
+	// On phones only the first column and the title show, so Delete stays in view.
+	const wide = (column: string) => (column === r.columns[0] || column === 'title' ? '' : 'max-sm:hidden');
+
 	async function remove(key: string) {
 		if (confirm('Delete this entry? Members lose it and their progress on it.')) await deleteRow({ table, key });
 	}
@@ -31,7 +34,7 @@
 			<thead>
 				<tr class="border-b border-white/15">
 					{#if child}<th class="w-8"></th>{/if}
-					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display">{labels[column] ?? r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
+					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display {wide(column)}">{labels[column] ?? r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
 					<th></th>
 				</tr>
 			</thead>
@@ -49,7 +52,7 @@
 							</td>
 						{/if}
 						{#each r.columns as column (column)}
-							<td class="py-2 pr-4">
+							<td class="py-2 pr-4 {wide(column)}">
 								{#if column === r.columns[0] || column === 'title'}
 									<a href="/admin/{table}/{encodeURIComponent(key)}" class="text-stone underline">{cell(column, row[column]) || '(empty)'}</a>
 								{:else}
