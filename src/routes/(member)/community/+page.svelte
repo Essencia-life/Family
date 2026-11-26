@@ -67,6 +67,7 @@
 			<div class="moonwrap flex justify-center"><Moon size={260} /></div>
 		</div>
 
+		{#if live.length}
 		<h2 class="display mt-14 mb-4 text-2xl md:text-3xl">Live practice</h2>
 		<!-- Planned in the back-office as practices with a "Live at" time; afterwards they are recordings in the practice library. -->
 		<div class="grid gap-4 md:grid-cols-2">
@@ -79,12 +80,12 @@
 						<span class="muted text-[0.84rem]">with {s.teacher}</span>
 					</span>
 				</a>
-			{:else}
-				<p class="muted">The next live practices will be announced here.</p>
 			{/each}
 		</div>
 		<p class="muted mt-4 text-[0.85rem]">Missed one? Every live practice stays in the <a href="/practice" class="link">practice library</a>.</p>
+		{/if}
 
+		{#if recordings.length}
 		<h2 class="display mt-14 mb-4 text-2xl md:text-3xl">ZEGG Forum recordings</h2>
 		<div class="grid gap-5 md:grid-cols-3">
 			{#each recordings as r (r.slug)}
@@ -97,6 +98,7 @@
 				</a>
 			{/each}
 		</div>
+		{/if}
 
 		<div id="exchange" class="mt-14 mb-3 flex scroll-mt-20 flex-wrap items-end justify-between gap-3">
 			<h2 class="display text-2xl md:text-3xl">The exchange</h2>

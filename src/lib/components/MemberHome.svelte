@@ -81,6 +81,7 @@
 			</div>
 		</div>
 
+		{#if continuing.length}
 		<div class="mt-14 mb-4 flex items-end justify-between">
 			<h2 class="display text-2xl md:text-3xl">Continue learning</h2>
 			<a href="/courses" class="link">All intro classes</a>
@@ -88,7 +89,9 @@
 		<div class="rail wide">
 			{#each continuing as course (course.slug)}<CourseCard {course} />{/each}
 		</div>
+		{/if}
 
+		{#if practices.length > 1}
 		<div class="mt-10 mb-4 flex items-end justify-between">
 			<h2 class="display text-2xl md:text-3xl">Earlier mornings</h2>
 			<a href="/practice" class="link">Whole archive</a>
@@ -96,5 +99,6 @@
 		<div class="rail">
 			{#each practices.slice(1, 7) as practice (practice.id)}<PracticeCard {practice} />{/each}
 		</div>
+		{/if}
 	</div>
 </div>
