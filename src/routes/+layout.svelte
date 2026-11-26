@@ -29,6 +29,10 @@
 			}).finished.finally(() => thumbFor(navigation.from?.url.pathname)?.style.removeProperty('view-transition-name'));
 		});
 	});
+	// Lets the server greet by the member's local time (see greeting.ts).
+	$effect(() => {
+		document.cookie = `tz=${encodeURIComponent(Intl.DateTimeFormat().resolvedOptions().timeZone)}; path=/; max-age=31536000; samesite=lax`;
+	});
 	const closeMenu = () => document.getElementById('menu')?.hidePopover();
 	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
 </script>
