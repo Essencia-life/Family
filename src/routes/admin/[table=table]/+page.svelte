@@ -25,13 +25,13 @@
 	<a href="/admin/{table}/new" class="btn btn-amber btn-sm">New</a>
 </div>
 
-{#snippet list(rows: typeof all)}
+{#snippet list(rows: typeof all, labels: Record<string, string> = {})}
 	<div class="overflow-x-auto">
 		<table class="w-full text-left text-[0.85rem]">
 			<thead>
 				<tr class="border-b border-white/15">
 					{#if child}<th class="w-8"></th>{/if}
-					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display">{r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
+					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display">{labels[column] ?? r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
 					<th></th>
 				</tr>
 			</thead>
@@ -77,7 +77,7 @@
 	<h2 class="display mb-3 text-xl">{r.upcoming.label}</h2>
 	{#if ahead.length}{@render list(ahead.toSorted((a, b) => Date.parse(String(a.row[col])) - Date.parse(String(b.row[col]))))}{:else}<p class="muted">Nothing planned.</p>{/if}
 	<h2 class="display mt-10 mb-3 text-xl">{r.upcoming.restLabel}</h2>
-	{@render list(all.filter((x) => !ahead.includes(x)))}
+	{@render list(all.filter((x) => !ahead.includes(x)), r.upcoming.restColumnLabel ? { [col]: r.upcoming.restColumnLabel } : {})}
 {:else if all.length}
 	{@render list(all)}
 {:else}

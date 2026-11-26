@@ -21,7 +21,7 @@ export type Resource = {
 	columns: string[];
 	order: { column: string; ascending: boolean }[];
 	/** Rows whose timestamp in this column lies ahead are listed apart, above the rest. */
-	upcoming?: { column: string; label: string; restLabel: string };
+	upcoming?: { column: string; label: string; restLabel: string; restColumnLabel?: string };
 	/** Edited inside the parent's list (expandable rows) instead of a section of its own. Needs a `position` field. */
 	parent?: { table: string; column: string };
 	fields: Field[];
@@ -37,7 +37,7 @@ export const RESOURCES: Record<string, Resource> = {
 		label: 'Weekly practices',
 		key: 'id',
 		columns: ['week', 'type', 'title', 'teacher', 'starts_at'],
-		upcoming: { column: 'starts_at', label: 'Planned live', restLabel: 'Library' },
+		upcoming: { column: 'starts_at', label: 'Planned live', restLabel: 'Library', restColumnLabel: 'Recorded at' },
 		order: [
 			{ column: 'week', ascending: false },
 			{ column: 'published_on', ascending: false }
