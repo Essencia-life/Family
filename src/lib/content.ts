@@ -1,5 +1,6 @@
 // Look of the placeholder artwork, per practice type. Shared by server and browser.
 export const PRACTICE_TYPES = ['Yoga', 'Breathwork', 'Qi Gong', 'Meditation', 'Movement'] as const;
+export const LIVE_KINDS = ['Morning practice', 'Live session'] as const;
 export const THREAD_CATEGORIES = ['New moon reflections', 'Practice', 'Community life', 'Permaculture', 'Eco-village'] as const;
 
 const forumDots = [0, 1, 2, 3, 4, 5, 6, 7]

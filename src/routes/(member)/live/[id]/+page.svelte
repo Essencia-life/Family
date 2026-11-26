@@ -14,7 +14,7 @@
 		{#if ended}
 			<div class="mt-5"><Player video={s} title={s.title} colors={ART.Meditation.colors} svg={ART.Meditation.svg} /></div>
 		{/if}
-		<span class="chip mt-9">{ended ? 'Recording' : 'Live'} · {formatSession(s.starts_at)}</span>
+		<span class="chip mt-9">{ended ? 'Recording' : 'Live'} · {s.kind} · {formatSession(s.starts_at)}</span>
 		<h1 class="display mt-3 mb-1 text-3xl md:text-4xl">{s.title}</h1>
 		<p class="muted mb-4 text-[0.88rem]">with {s.host} · {s.minutes} min · Lisbon time</p>
 		<p class="muted max-w-2xl leading-[1.8]">{s.description}</p>

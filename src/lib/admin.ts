@@ -1,6 +1,6 @@
 // What the back-office can edit. Shared by server (validation) and browser (forms).
 // To make another table editable, add an entry here; the admin pages and remote functions are generic.
-import { PRACTICE_TYPES } from './content.ts';
+import { LIVE_KINDS, PRACTICE_TYPES } from './content.ts';
 
 export type FieldType = 'text' | 'textarea' | 'number' | 'date' | 'datetime' | 'url' | 'select' | 'list';
 export type Field = {
@@ -32,15 +32,16 @@ export const RESOURCES: Record<string, Resource> = {
 	live_sessions: {
 		label: 'Live sessions',
 		key: 'id',
-		columns: ['starts_at', 'title', 'host', 'video_id'],
+		columns: ['starts_at', 'kind', 'title', 'host', 'video_id'],
 		order: [{ column: 'starts_at', ascending: false }],
 		fields: [
+			{ name: 'kind', label: 'Kind', type: 'select', options: LIVE_KINDS, required: true },
 			{ name: 'title', label: 'Title', type: 'text', required: true },
 			{ name: 'host', label: 'Host', type: 'text', required: true },
 			{ name: 'starts_at', label: 'Starts at (Lisbon time)', type: 'datetime', required: true },
 			{ name: 'minutes', label: 'Minutes', type: 'number', required: true },
 			{ name: 'description', label: 'Description', type: 'textarea' },
-			{ name: 'join_url', label: 'Join link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link. Members see it shortly before the session.' },
+			{ name: 'join_url', label: 'Join link', type: 'url', nullable: true, hint: 'Morning practice: the YouTube live link. Other sessions: Zoom/Jitsi link.' },
 			...VIDEO.map((f) => (f.name === 'video_id' ? { ...f, hint: 'Set after the session; it then shows up as a recording.' } : f))
 		]
 	},
@@ -111,14 +112,16 @@ export const RESOURCES: Record<string, Resource> = {
 		]
 	},
 	moon_themes: {
-		label: 'New moon themes',
+		label: 'New moon meetings',
 		key: 'circle_on',
-		columns: ['circle_on', 'theme'],
+		columns: ['circle_on', 'theme', 'starts_at'],
 		order: [{ column: 'circle_on', ascending: false }],
 		fields: [
 			{ name: 'circle_on', label: 'New moon date', type: 'date', required: true, hint: 'Must match a new moon date shown on the community page.' },
 			{ name: 'theme', label: 'Theme', type: 'text', required: true },
-			{ name: 'invitation', label: 'Invitation', type: 'textarea' }
+			{ name: 'invitation', label: 'Invitation', type: 'textarea' },
+			{ name: 'starts_at', label: 'Meeting starts at (Lisbon time)', type: 'datetime', nullable: true, hint: 'Empty shows 19:00 on the new moon day.' },
+			{ name: 'join_url', label: 'Meeting link', type: 'url', nullable: true, hint: 'Zoom/Jitsi link for the meeting.' }
 		]
 	}
 };

@@ -25,6 +25,7 @@
 		document.getElementById('exchange')?.scrollIntoView({ behavior: 'smooth' });
 	}
 	const daysTo = (day: string) => Math.max(0, Math.round((Date.parse(day + 'T19:00:00Z') - Date.now()) / 864e5));
+	const time = (iso: string) => new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Lisbon' });
 	const date = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 </script>
 
@@ -44,8 +45,8 @@
 				<p class="mt-2 mb-1 font-accent text-[1.4rem] text-glow italic">
 					{daysTo(circles.next) ? `in ${daysTo(circles.next)} day${daysTo(circles.next) > 1 ? 's' : ''}` : 'tonight'}
 				</p>
-				<!-- Guess: time comes from the prototype. The call link is not wired up yet. -->
-				<p class="muted mb-6">19:00 Lisbon time · live on video</p>
+				<!-- Without a planned time, 19:00 comes from the prototype. -->
+				<p class="muted mb-6">{circles.theme?.starts_at ? time(circles.theme.starts_at) : '19:00'} Lisbon time · live on video</p>
 				{#if circles.theme}
 					<p class="display text-xl">This month's theme: {circles.theme.theme}</p>
 					<p class="mt-1 mb-4 max-w-xl font-accent text-[1.15rem] text-stone/85 italic">{circles.theme.invitation}</p>
@@ -57,6 +58,9 @@
 					<button class="btn btn-amber" disabled={setGoing.pending > 0} onclick={() => setGoing(!circles.going)}>
 						{circles.going ? "✓ You're coming" : "I'll be there"}
 					</button>
+					{#if circles.theme?.join_url}
+						<a href={circles.theme.join_url} class="btn btn-light" target="_blank" rel="noopener">Join the meeting &nearr;</a>
+					{/if}
 					<button class="btn btn-ghost" onclick={shareReflection}>Share your reflection</button>
 				</div>
 				<p class="muted mt-6 text-[0.8rem]">Then: {circles.later.map(formatDay).join(' and ')}</p>
@@ -71,7 +75,7 @@
 				<a href="/live/{s.id}" class="glass card flex items-center gap-5">
 					<span class="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-stone text-forest"><PlayIcon size={18} /></span>
 					<span>
-						<span class="meta mt-0! block">{formatSession(s.starts_at)}</span>
+						<span class="meta mt-0! block">{s.kind} · {formatSession(s.starts_at)}</span>
 						<span class="display block text-xl">{s.title}</span>
 						<span class="muted text-[0.84rem]">with {s.host}</span>
 					</span>

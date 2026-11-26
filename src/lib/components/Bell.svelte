@@ -7,7 +7,7 @@
 	let now = $state(Date.now());
 	$effect(() => {
 		const tick = setInterval(() => (now = Date.now()), 30e3);
-		// Picks up a live session entering its last hour while the page stays open.
+		// Picks up a live session or moon meeting entering its last hour while the page stays open.
 		const poll = setInterval(() => !opened && news.refresh(), 5 * 60e3);
 		return () => (clearInterval(tick), clearInterval(poll));
 	});
@@ -43,12 +43,12 @@
 
 <div id="news" popover class="news glass" ontoggle={toggle}>
 	<p class="eyebrow mb-3">New for you</p>
-	{#if news.current?.live}
-		{@const live = news.current.live}
-		<a href="/live/{live.id}" class="live" onclick={() => document.getElementById('news')?.hidePopover()}>
-			<span class="chip">Live soon</span>
-			<span class="ttl block">{live.title}</span>
-			<span class="muted text-[0.82rem]">Starts {startsIn(live.starts_at)}</span>
+	{#if news.current?.soon}
+		{@const soon = news.current.soon}
+		<a href={soon.href} class="live" onclick={() => document.getElementById('news')?.hidePopover()}>
+			<span class="chip">{soon.label}</span>
+			<span class="ttl block">{soon.title}</span>
+			<span class="muted text-[0.82rem]">Starts {startsIn(soon.starts_at)}</span>
 		</a>
 	{/if}
 	{#if news.current?.items.length}
@@ -61,7 +61,7 @@
 				</li>
 			{/each}
 		</ul>
-	{:else if !news.current?.live}
+	{:else if !news.current?.soon}
 		<p class="muted text-[0.88rem] italic">You are all caught up. Enjoy the quiet.</p>
 	{/if}
 </div>

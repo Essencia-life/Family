@@ -13,7 +13,7 @@ export const getCircles = query(async () => {
 	const [next, ...later] = nextNewMoons(3);
 	const [rsvp, theme] = await Promise.all([
 		db.from('circle_rsvps').select('circle_on').eq('user_id', member.id).eq('circle_on', next).maybeSingle(),
-		db.from('moon_themes').select('theme, invitation').eq('circle_on', next).maybeSingle()
+		db.from('moon_themes').select('theme, invitation, starts_at, join_url').eq('circle_on', next).maybeSingle()
 	]);
 	return { next, later, going: !!must(rsvp), theme: must(theme) };
 });
@@ -29,7 +29,7 @@ export const setGoing = command(v.boolean(), async (going) => {
 	await getCircles().refresh();
 });
 
-const LIVE = 'id, title, host, starts_at, minutes, description, join_url, video_provider, video_id';
+const LIVE = 'id, kind, title, host, starts_at, minutes, description, join_url, video_provider, video_id';
 
 /** Upcoming live sessions (including one running now) and the recordings of past ones. */
 export const getLiveSessions = query(async () => {
