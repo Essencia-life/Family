@@ -31,8 +31,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each rows as row (row[r.key])}
-					{@const key = String(row[r.key])}
+				{#each rows as { key, row } (key)}
 					<tr class="border-b border-moss/10">
 						{#each r.columns as column (column)}
 							<td class="py-2 pr-4">

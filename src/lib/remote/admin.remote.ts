@@ -13,7 +13,8 @@ export const listRows = query(table, async (name) => {
 	const r = RESOURCES[name];
 	let q = db.from(name).select([r.key, ...r.columns].join(', '));
 	for (const o of r.order) q = q.order(o.column, { ascending: o.ascending });
-	return must(await q) as unknown as Record<string, unknown>[];
+	// The key travels with each row: while the next table loads, the page still shows the old rows.
+	return (must(await q) as unknown as Record<string, unknown>[]).map((row) => ({ key: String(row[r.key]), row }));
 });
 
 export const getRow = query(ref, async ({ table, key }) => {
