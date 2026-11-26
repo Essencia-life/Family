@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/state';
+	import { greeting } from '#lib/greeting.ts';
 	import { ART, formatSession, gradient } from '#lib/content.ts';
 	import { formatDay } from '#lib/moon.ts';
 	import CourseCard from '#lib/components/CourseCard.svelte';
@@ -23,6 +25,8 @@
 	const started = $derived(courses.filter((c) => c.doneCount).length);
 	const practisedPct = $derived(practices.length ? Math.round((practices.filter((p) => p.practised).length / practices.length) * 100) : 0);
 	const daysTo = (day: string) => Math.max(0, Math.round((Date.parse(day + 'T19:00:00Z') - Date.now()) / 864e5));
+	// The server uses the time zone the browser stored in the tz cookie; the browser uses its own clock.
+	const hello = greeting(import.meta.env.SSR ? (page.data.tz ?? 'Europe/Lisbon') : undefined);
 	const inDays = (n: number) => (n ? `in ${n} day${n > 1 ? 's' : ''}` : 'tonight');
 </script>
 
@@ -30,7 +34,7 @@
 	<div class="wrap">
 		<div class="mb-8 flex flex-wrap items-end justify-between gap-6">
 			<div>
-				<p class="eyebrow mb-2">Good morning</p>
+				<p class="eyebrow mb-2">{hello}</p>
 				<h1 class="display text-4xl md:text-5xl">Last morning <span class="accent">practice.</span></h1>
 			</div>
 			<div>

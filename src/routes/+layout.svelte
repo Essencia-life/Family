@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './layout.css';
 	import { onNavigate } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import Bell from '#lib/components/Bell.svelte';
 	import type { LayoutProps } from './$types';
@@ -28,6 +29,11 @@
 				thumbFor(navigation.from?.url.pathname)?.style.setProperty('view-transition-name', 'video');
 			}).finished.finally(() => thumbFor(navigation.from?.url.pathname)?.style.removeProperty('view-transition-name'));
 		});
+	});
+	// Lets the server greet by the member's local time (see greeting.ts).
+	onMount(() => {
+		// Browsers without the Cookie Store API simply keep the Lisbon fallback.
+		globalThis.cookieStore?.set({ name: 'tz', value: Intl.DateTimeFormat().resolvedOptions().timeZone, path: '/', expires: Date.now() + 365 * 864e5, sameSite: 'lax' });
 	});
 	const closeMenu = () => document.getElementById('menu')?.hidePopover();
 	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
