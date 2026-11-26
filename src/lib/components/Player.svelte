@@ -23,9 +23,11 @@
 	let duration = $state(0);
 	let fullscreen = $state(false);
 	let canFullscreen = $state(false);
+	let touch = $state(true);
 
 	onMount(() => {
 		canFullscreen = document.fullscreenEnabled;
+		touch = matchMedia('(pointer: coarse)').matches;
 		const onFs = () => (fullscreen = document.fullscreenElement === stage);
 		document.addEventListener('fullscreenchange', onFs);
 		if (custom && iframe) {
@@ -94,14 +96,19 @@
 			></iframe>
 			{#if custom}
 				{#if !started}
-					<!-- Until the first play our poster covers YouTube's start screen. It lets clicks through, so a tap in the
-					     middle starts the video in YouTube itself (iOS only allows that); the clear bands block its title and logo. -->
+					<!-- Until the first play our poster covers YouTube's start screen. On touch screens it lets taps through, so
+					     the middle starts the video in YouTube itself (iOS only allows that); the clear bands block its title and logo. -->
 					<div class="poster">
 						<Cover thumbs={thumbnails(video)} />
 						<span class="bigplay"><PlayIcon size={30} /></span>
 					</div>
-					<div class="shield top-0 h-[24%]"></div>
-					<div class="shield bottom-0 h-[22%]"></div>
+					{#if ready && !touch}
+						<!-- With a mouse we start through the API, so YouTube never sees the pointer and never shows its UI. -->
+						<button class="shield inset-0 cursor-pointer" aria-label="Play" onclick={toggle}></button>
+					{:else}
+						<div class="shield top-0 h-[24%]"></div>
+						<div class="shield bottom-0 h-[22%]"></div>
+					{/if}
 				{:else}
 					<button class="shield inset-0 cursor-pointer" aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
 						{#if ended}
