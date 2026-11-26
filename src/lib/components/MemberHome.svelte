@@ -33,8 +33,11 @@
 				<p class="eyebrow mb-2">Good morning</p>
 				<h1 class="display text-4xl md:text-5xl">This week's <span class="accent">practice.</span></h1>
 			</div>
-			<div class="days" aria-label="Your last seven days">
-				{#each rhythm.week as d, i (i)}<div class="dd" class:on={d.on} class:today={d.today}><i></i>{d.label}</div>{/each}
+			<div>
+				<p class="meta mt-0! mb-2">Your mornings · last 7 days</p>
+				<div class="days" title="A glowing circle means you marked a practice as done that day.">
+					{#each rhythm.week as d, i (i)}<div class="dd" class:on={d.on} class:today={d.today}><i></i>{d.label}</div>{/each}
+				</div>
 			</div>
 		</div>
 
