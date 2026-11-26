@@ -33,13 +33,16 @@
 				<p class="eyebrow mb-2">Good morning</p>
 				<h1 class="display text-4xl md:text-5xl">This week's <span class="accent">practice.</span></h1>
 			</div>
-			<div class="days" aria-label="Your last seven days">
-				{#each rhythm.week as d, i (i)}<div class="dd" class:on={d.on} class:today={d.today}><i></i>{d.label}</div>{/each}
+			<div>
+				<p class="meta mt-0! mb-2">Your mornings · last 7 days</p>
+				<div class="days" title="A glowing circle means you marked a practice as done that day.">
+					{#each rhythm.week as d, i (i)}<div class="dd" class:on={d.on} class:today={d.today}><i></i>{d.label}</div>{/each}
+				</div>
 			</div>
 		</div>
 
 		{#if latest}
-			<a href="/practice/{latest.week}" class="feature card" style={gradient(art.colors)}>
+			<a href="/practice/{latest.id}" class="feature card" style={gradient(art.colors)}>
 				<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html art.svg}</svg>
 				<Cover thumbs={thumbnails(latest)} />
 				<span class="chip mb-3 self-start bg-stone/20! text-stone!">New · Week {latest.week} · {latest.type}</span>
@@ -91,7 +94,7 @@
 			<a href="/practice" class="link">Whole archive</a>
 		</div>
 		<div class="rail">
-			{#each practices.slice(1, 7) as practice (practice.week)}<PracticeCard {practice} />{/each}
+			{#each practices.slice(1, 7) as practice (practice.id)}<PracticeCard {practice} />{/each}
 		</div>
 	</div>
 </div>

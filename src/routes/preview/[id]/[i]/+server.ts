@@ -5,9 +5,8 @@ import type { RequestHandler } from './$types';
 
 /** A practice thumbnail for the public landing page, so visitors never see the members' video ids. */
 export const GET: RequestHandler = async ({ params, fetch }) => {
-	const week = Number(params.week);
-	if (!Number.isInteger(week)) error(404);
-	const row = must(await db.from('practices').select('video_provider, video_id').eq('week', week).maybeSingle());
+	if (!/^[0-9a-f-]{36}$/i.test(params.id)) error(404);
+	const row = must(await db.from('practices').select('video_provider, video_id').eq('id', params.id).maybeSingle());
 	const thumb = thumbnails(row)[Number(params.i)];
 	if (!thumb) error(404);
 	const res = await fetch(thumb.url).catch(() => null);

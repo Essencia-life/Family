@@ -19,7 +19,7 @@
 			{/each}
 		</div>
 		<div class="grid grid-cols-2 gap-x-5 gap-y-9 md:grid-cols-4">
-			{#each shown as practice (practice.week)}<PracticeCard {practice} />{/each}
+			{#each shown as practice (practice.id)}<PracticeCard {practice} />{/each}
 		</div>
 		{#if !shown.length}<p class="muted">No {filter} practice yet.</p>{/if}
 	</div>
