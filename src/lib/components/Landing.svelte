@@ -154,7 +154,7 @@
 				<a href="#pricing" class="link">Unlock them all</a>
 			</div>
 			<div class="rail">
-				{#each preview.practices as practice, i (practice.week)}<PracticeCard {practice} locked={i > 0} />{/each}
+				{#each preview.practices as practice, i (practice.id)}<PracticeCard {practice} locked={i > 0} />{/each}
 			</div>
 		</div>
 	</section>

@@ -4,12 +4,12 @@
 	import Thumb from './Thumb.svelte';
 	import type { Thumbnail } from '#lib/video.ts';
 
-	type Practice = { week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean; video_provider?: string; video_id?: string | null; thumbs?: Thumbnail[] };
+	type Practice = { id: string; week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean; video_provider?: string; video_id?: string | null; thumbs?: Thumbnail[] };
 	let { practice: p, locked = false }: { practice: Practice; locked?: boolean } = $props();
 	const art = $derived(ART[p.type] ?? ART.Yoga);
 </script>
 
-<a href={locked ? '/#pricing' : `/practice/${p.week}`} class="card">
+<a href={locked ? '/#pricing' : `/practice/${p.id}`} class="card">
 	<Thumb colors={art.colors} svg={art.svg} video={p} thumbs={p.thumbs} portrait>
 		<span class="chip on-img">{p.type}</span>
 		<span class="wk-num">{p.week}</span>

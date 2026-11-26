@@ -39,7 +39,7 @@
 		</div>
 
 		{#if latest}
-			<a href="/practice/{latest.week}" class="feature card" style={gradient(art.colors)}>
+			<a href="/practice/{latest.id}" class="feature card" style={gradient(art.colors)}>
 				<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html art.svg}</svg>
 				<Cover thumbs={thumbnails(latest)} />
 				<span class="chip mb-3 self-start bg-stone/20! text-stone!">New · Week {latest.week} · {latest.type}</span>
@@ -91,7 +91,7 @@
 			<a href="/practice" class="link">Whole archive</a>
 		</div>
 		<div class="rail">
-			{#each practices.slice(1, 7) as practice (practice.week)}<PracticeCard {practice} />{/each}
+			{#each practices.slice(1, 7) as practice (practice.id)}<PracticeCard {practice} />{/each}
 		</div>
 	</div>
 </div>

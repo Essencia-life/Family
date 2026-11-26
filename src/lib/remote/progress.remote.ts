@@ -15,17 +15,17 @@ export const getRhythm = query(async () => {
 });
 
 export const setPractised = command(
-	v.object({ week: v.pipe(v.number(), v.integer()), done: v.boolean() }),
-	async ({ week, done }) => {
+	v.object({ id: v.pipe(v.string(), v.uuid()), done: v.boolean() }),
+	async ({ id, done }) => {
 		const member = await requireMember();
-		const row = { user_id: member.id, week };
+		const row = { user_id: member.id, practice_id: id };
 		must(
 			done
 				? await db.from('practised').upsert(row, { ignoreDuplicates: true })
 				: await db.from('practised').delete().match(row)
 		);
 		await getPractices().refresh();
-		await getPractice(week).refresh();
+		await getPractice(id).refresh();
 		await getRhythm().refresh();
 	}
 );
