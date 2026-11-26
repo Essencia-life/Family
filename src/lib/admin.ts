@@ -22,6 +22,8 @@ export type Resource = {
 	order: { column: string; ascending: boolean }[];
 	/** Rows whose timestamp in this column lies ahead are listed apart, above the rest. */
 	upcoming?: { column: string; label: string; restLabel: string };
+	/** Edited inside the parent's list (expandable rows) instead of a section of its own. Needs a `position` field. */
+	parent?: { table: string; column: string };
 	fields: Field[];
 };
 
@@ -72,7 +74,8 @@ export const RESOURCES: Record<string, Resource> = {
 	lessons: {
 		label: 'Lessons',
 		key: 'id',
-		columns: ['course_slug', 'position', 'title', 'video_id'],
+		parent: { table: 'courses', column: 'course_slug' },
+		columns: ['position', 'title', 'video_id'],
 		order: [
 			{ column: 'course_slug', ascending: true },
 			{ column: 'position', ascending: true }
@@ -114,6 +117,9 @@ export const RESOURCES: Record<string, Resource> = {
 		]
 	}
 };
+
+/** The resource listed inside each row of `table`, if any. */
+export const childOf = (table: string) => Object.entries(RESOURCES).find(([, r]) => r.parent?.table === table);
 
 const TZ = 'Europe/Lisbon';
 
