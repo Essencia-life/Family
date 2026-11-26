@@ -155,6 +155,13 @@ body::before {
 	.stage .glowbg { position: absolute; inset: -30px; filter: blur(70px); opacity: 0.55; border-radius: 40px; z-index: 0; }
 	.video { position: relative; z-index: 1; aspect-ratio: 16/9; border-radius: 22px; overflow: hidden; border: 1px solid rgba(252, 250, 244, 0.15); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); }
 	.video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+	.video { view-transition-name: video; }
+	.video.fs { border-radius: 0; border: 0; }
+	/* Over the iframe, so YouTube's own title, logo and links can't be clicked. */
+	.shield { position: absolute; left: 0; right: 0; z-index: 2; }
+	.controls { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 0.75rem; padding: 1.4rem 1rem 0.7rem; font-size: 0.75rem; color: var(--color-stone); background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent); }
+	.controls button { display: flex; padding: 0.25rem; cursor: pointer; opacity: 0.9; }
+	.controls button:hover { opacity: 1; }
 
 	.lesson { display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left; padding: 0.7rem 0.9rem; border-radius: 12px; font-size: 0.86rem; transition: background 0.2s; color: var(--color-ink); }
 	.lesson:hover { background: rgba(252, 250, 244, 0.07); }
@@ -205,3 +212,7 @@ body::before {
 	.sun { transform: translate(-50%, 50%); }
 	.sky-glow { opacity: 1; }
 }
+
+/* Thumbnail to player: crop instead of stretching while the shapes differ. */
+::view-transition-old(video),
+::view-transition-new(video) { height: 100%; width: 100%; object-fit: cover; }

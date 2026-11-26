@@ -3,10 +3,13 @@ export type Video = { video_provider: string; video_id: string | null };
 /** A preview image. Letterboxed ones have black bars around a 16:9 picture that the page crops away. */
 export type Thumbnail = { url: string; letterboxed: boolean };
 
+// No YouTube controls, keyboard, annotations or related videos: Player.svelte draws its own controls on top.
+const YOUTUBE_PARAMS = 'rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&playsinline=1&enablejsapi=1';
+
 // To switch or add a host, add an entry here and set `video_provider` on the rows that use it.
 const providers: Record<string, { embed: (id: string) => string; thumbnails: (id: string) => Thumbnail[] }> = {
 	youtube: {
-		embed: (id) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?rel=0`,
+		embed: (id) => `https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}?${YOUTUBE_PARAMS}`,
 		// maxresdefault is sharp but missing on some videos; hqdefault always exists.
 		thumbnails: (id) => [
 			{ url: `https://i.ytimg.com/vi/${encodeURIComponent(id)}/maxresdefault.jpg`, letterboxed: false },

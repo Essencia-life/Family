@@ -4,7 +4,7 @@ import { embedUrl, thumbnails } from './video';
 describe('embedUrl', () => {
 	it('builds a privacy-friendly YouTube embed', () => {
 		expect(embedUrl({ video_provider: 'youtube', video_id: 'abc_123' })).toBe(
-			'https://www.youtube-nocookie.com/embed/abc_123?rel=0'
+			'https://www.youtube-nocookie.com/embed/abc_123?rel=0&controls=0&disablekb=1&fs=0&iv_load_policy=3&playsinline=1&enablejsapi=1'
 		);
 	});
 	it('returns null when there is no video yet', () => {
