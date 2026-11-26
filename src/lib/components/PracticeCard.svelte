@@ -51,7 +51,7 @@
 <style>
 	.soon {
 		position: absolute; inset: 0; z-index: 1; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; padding: 1rem;
-		border-radius: inherit; border: 2px dashed var(--color-glow);
+		border-radius: inherit; border: 1px solid rgba(232, 180, 85, 0.35);
 		background: linear-gradient(to top, rgba(8, 12, 9, 0.88), rgba(8, 12, 9, 0.6));
 		font-family: var(--font-display); font-size: 0.66rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-glow);
 	}
