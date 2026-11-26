@@ -6,12 +6,12 @@
 	let { children, data }: LayoutProps = $props();
 	const user = $derived(data.session?.user);
 	const nav = [
-		['/home', 'Home'],
+		['/', 'Home'],
 		['/practice', 'Practice'],
 		['/courses', 'Courses'],
 		['/community', 'Community']
 	];
-	const current = (href: string) => (page.url.pathname.startsWith(href) ? 'page' : undefined);
+	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
 </script>
 
 <svelte:head>
@@ -20,7 +20,7 @@
 
 <header class="top">
 	<div class="wrap flex h-16 items-center justify-between gap-4">
-		<a href={user ? '/home' : '/'} class="logo shrink-0 whitespace-nowrap"><span class="orb"></span><span>Essência <i>Family</i></span></a>
+		<a href="/" class="logo shrink-0 whitespace-nowrap"><span class="orb"></span><span>Essência <i>Family</i></span></a>
 		{#if user}
 			<!-- Scrolls sideways on phones instead of widening the page. -->
 			<nav class="flex min-w-0 items-center gap-4 overflow-x-auto whitespace-nowrap md:gap-5" style="scrollbar-width:none">
@@ -38,7 +38,7 @@
 		{:else}
 			<nav class="flex items-center gap-6">
 				<a href="/#pricing" class="nav-link hidden md:inline">Membership</a>
-				<a href="/auth/signin?callbackUrl=/home" class="nav-link">Log in</a>
+				<a href="/auth/signin?callbackUrl=/" class="nav-link">Log in</a>
 				<a href="/#pricing" class="btn btn-amber btn-sm">Join the Family</a>
 			</nav>
 		{/if}
