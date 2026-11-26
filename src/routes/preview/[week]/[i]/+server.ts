@@ -10,8 +10,8 @@ export const GET: RequestHandler = async ({ params, fetch }) => {
 	const row = must(await db.from('practices').select('video_provider, video_id').eq('week', week).maybeSingle());
 	const thumb = thumbnails(row)[Number(params.i)];
 	if (!thumb) error(404);
-	const res = await fetch(thumb.url);
-	if (!res.ok) error(404);
+	const res = await fetch(thumb.url).catch(() => null);
+	if (!res?.ok) error(404);
 	return new Response(res.body, {
 		headers: { 'content-type': res.headers.get('content-type') ?? 'image/jpeg', 'cache-control': 'public, max-age=86400' }
 	});
