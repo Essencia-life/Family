@@ -9,5 +9,9 @@ export const variables = defineEnvVars({
 	AUTH_GOOGLE_ID: { schema: optional, description: 'Google OAuth client id. Leave empty to hide Google login.' },
 	AUTH_GOOGLE_SECRET: { schema: optional, description: 'Google OAuth client secret' },
 	RESEND_API_KEY: { schema: optional, description: 'Resend API key for email magic links. Leave empty to hide email login.' },
+	MAINTAINER_DOMAINS: {
+		schema: (value) => (value || 'essencia.life,essencia.family').split(',').map((d) => d.trim().toLowerCase()).filter(Boolean),
+		description: 'Comma-separated email domains whose accounts get the admin back-office. Default: essencia.life,essencia.family'
+	},
 	AUTH_EMAIL_FROM: { schema: optional, description: 'Sender address for magic links, e.g. "Essência Family <family@essencia.life>"' }
 });

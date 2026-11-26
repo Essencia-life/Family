@@ -19,6 +19,7 @@ Built with SvelteKit 3 (remote functions), Auth.js and Supabase.
 - **Live sessions**: add rows to `public.live_sessions` (time, host, `join_url`). After the session, set `video_id` and it appears as a recording.
 - **New moon check-in**: dates are calculated; the theme for each date comes from `public.moon_themes`.
 - **Intro classes**: `courses.creator_url` links to the full course on the creator's site.
+- **Back-office** (`/admin`): accounts whose email domain is in `MAINTAINER_DOMAINS` (default `essencia.life,essencia.family`) can create, edit and delete live sessions, practices, courses, lessons, recordings and new moon themes. Admin remote functions call `requireMaintainer()`. To make another table editable, add it to `src/lib/admin.ts`.
 - **Prices**: `src/lib/pricing.ts`, including the early-bird switch.
 - **Membership**: `public.memberships` is ready for a payment provider. Until payments exist, every signed-in person has access (see `src/lib/server/guard.ts`).
 
