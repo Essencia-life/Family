@@ -15,8 +15,9 @@
 		return field ? toInput(field, value).replace('T', ' ') : String(value ?? '');
 	};
 
-	// On phones only the first column and the title show, so Delete stays in view.
-	const wide = (column: string) => (column === r.columns[0] || column === 'title' ? '' : 'max-sm:hidden');
+	// On phones each row is a card: the title, the other columns as one line under it, and Delete beside it.
+	const main = $derived(r.columns.includes('title') ? 'title' : r.columns[0]);
+	const wide = (column: string) => (column === main ? '' : 'max-sm:hidden');
 
 	async function remove(key: string) {
 		if (confirm('Delete this entry? Members lose it and their progress on it.')) await deleteRow({ table, key });
@@ -31,7 +32,7 @@
 {#snippet list(rows: typeof all, labels: Record<string, string> = {})}
 	<div class="overflow-x-auto">
 		<table class="w-full text-left text-[0.85rem]">
-			<thead>
+			<thead class="max-sm:hidden">
 				<tr class="border-b border-white/15">
 					{#if child}<th class="w-8"></th>{/if}
 					{#each r.columns as column (column)}<th class="py-2 pr-4 font-display {wide(column)}">{labels[column] ?? r.fields.find((f) => f.name === column)?.label ?? column}</th>{/each}
@@ -55,6 +56,9 @@
 							<td class="py-2 pr-4 {wide(column)}">
 								{#if column === r.columns[0] || column === 'title'}
 									<a href="/admin/{table}/{encodeURIComponent(key)}" class="text-stone underline">{cell(column, row[column]) || '(empty)'}</a>
+									{#if column === main}
+										<span class="muted block sm:hidden">{r.columns.filter((c) => c !== main).map((c) => cell(c, row[c])).filter(Boolean).join(' · ')}</span>
+									{/if}
 								{:else}
 									{cell(column, row[column])}
 								{/if}
