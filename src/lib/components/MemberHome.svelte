@@ -31,7 +31,7 @@
 		<div class="mb-8 flex flex-wrap items-end justify-between gap-6">
 			<div>
 				<p class="eyebrow mb-2">Good morning</p>
-				<h1 class="display text-4xl md:text-5xl">This week's <span class="accent">practice.</span></h1>
+				<h1 class="display text-4xl md:text-5xl">Last morning <span class="accent">practice.</span></h1>
 			</div>
 			<div>
 				<p class="meta mt-0! mb-2">Your mornings · last 7 days</p>
