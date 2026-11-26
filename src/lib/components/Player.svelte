@@ -112,34 +112,37 @@
 						{/if}
 					</button>
 					{#if ready}
-						<div class="controls">
-							<button aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
+						<div class="controls" class:playing>
+							<button class="main" aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
 								{#if playing}
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6zM14 4h4v16h-4z" /></svg>
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.5" /><rect x="14" y="4" width="4" height="16" rx="1.5" /></svg>
 								{:else}
-									<PlayIcon size={16} />
+									<PlayIcon size={18} />
 								{/if}
 							</button>
-							<span class="tabular-nums">{fmt(time)} / {fmt(duration)}</span>
+							<span class="time tabular-nums">{fmt(time)} / {fmt(duration)}</span>
 							<input
 								type="range"
-								class="flex-1 accent-glow"
+								class="seek"
 								aria-label="Position"
 								min="0"
 								max={duration || 1}
 								step="1"
 								value={time}
+								style:--p="{duration ? (time / duration) * 100 : 0}%"
 								oninput={(e) => seek(+e.currentTarget.value)}
 							/>
-							<button aria-label={muted ? 'Unmute' : 'Mute'} onclick={toggleMute}>
-								<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-									<path d="M4 9h4l5-5v16l-5-5H4z" />
-									{#if muted}<path d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" />{:else}<path d="M16 8a5 5 0 010 8" fill="none" stroke="currentColor" stroke-width="2" />{/if}
+							<button class="icon" aria-label={muted ? 'Unmute' : 'Mute'} onclick={toggleMute}>
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor" />
+									{#if muted}<path d="M16 9l5 6M21 9l-5 6" />{:else}<path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" />{/if}
 								</svg>
 							</button>
 							{#if canFullscreen}
-								<button aria-label={fullscreen ? 'Exit full screen' : 'Full screen'} onclick={toggleFullscreen}>
-									<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" /></svg>
+								<button class="icon" aria-label={fullscreen ? 'Exit full screen' : 'Full screen'} onclick={toggleFullscreen}>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+										{#if fullscreen}<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />{:else}<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />{/if}
+									</svg>
 								</button>
 							{/if}
 						</div>
