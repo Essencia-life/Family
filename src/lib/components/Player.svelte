@@ -1,23 +1,163 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { gradient } from '#lib/content.ts';
-	import { embedUrl, type Video } from '#lib/video.ts';
+	import { embedUrl, thumbnails, type Video } from '#lib/video.ts';
+	import { loadYouTube, type YTPlayer } from '#lib/youtube.ts';
+	import Cover from './Cover.svelte';
 	import PlayIcon from './PlayIcon.svelte';
 
 	let { video, title, colors, svg }: { video: Video; title: string; colors: readonly string[]; svg: string } = $props();
 	const src = $derived(embedUrl(video));
+	// Our own controls sit over YouTube's player, so its title, logo, share links and suggestions can't be clicked.
+	const custom = $derived(video.video_provider === 'youtube');
+
+	let stage: HTMLDivElement;
+	let iframe = $state<HTMLIFrameElement>();
+	let player: YTPlayer | undefined;
+	let ready = $state(false);
+	let started = $state(false);
+	let playing = $state(false);
+	let ended = $state(false);
+	let muted = $state(false);
+	let time = $state(0);
+	let duration = $state(0);
+	let fullscreen = $state(false);
+	let canFullscreen = $state(false);
+	let touch = $state(true);
+
+	onMount(() => {
+		canFullscreen = document.fullscreenEnabled;
+		touch = matchMedia('(pointer: coarse)').matches;
+		const onFs = () => (fullscreen = document.fullscreenElement === stage);
+		document.addEventListener('fullscreenchange', onFs);
+		if (custom && iframe) {
+			loadYouTube()
+				.then((YT) => {
+					player = new YT.Player(iframe!, {
+						events: {
+							onReady: () => {
+								ready = true;
+								duration = player!.getDuration();
+							},
+							onStateChange: ({ data }) => {
+								playing = data === 1;
+								ended = data === 0;
+								if (data === 1) started = true;
+								duration = player!.getDuration();
+							}
+						}
+					});
+				})
+				// Without the API the middle of the video still starts it; only our controls are missing.
+				.catch(() => {});
+		}
+		return () => {
+			document.removeEventListener('fullscreenchange', onFs);
+			player?.destroy();
+		};
+	});
+
+	$effect(() => {
+		if (!playing) return;
+		const t = setInterval(() => (time = player?.getCurrentTime() ?? 0), 250);
+		return () => clearInterval(t);
+	});
+
+	const toggle = () => (playing ? player?.pauseVideo() : player?.playVideo());
+	const seek = (s: number) => {
+		time = s;
+		player?.seekTo(s, true);
+	};
+	const toggleMute = () => {
+		if (!player) return;
+		muted ? player.unMute() : player.mute();
+		muted = !muted;
+	};
+	const toggleFullscreen = () => (fullscreen ? document.exitFullscreen() : stage.requestFullscreen());
+	const fmt = (s: number) => {
+		s = Math.floor(s);
+		const h = Math.floor(s / 3600);
+		const m = Math.floor((s % 3600) / 60);
+		const ss = String(s % 60).padStart(2, '0');
+		return h ? `${h}:${String(m).padStart(2, '0')}:${ss}` : `${m}:${ss}`;
+	};
 </script>
 
 <div class="stage">
 	<div class="glowbg" style={gradient(colors)}></div>
-	<div class="video" style={gradient(colors)}>
+	<div class="video" class:fs={fullscreen} style={gradient(colors)} bind:this={stage}>
 		{#if src}
 			<iframe
+				bind:this={iframe}
 				{src}
 				{title}
-				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
+				allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
 				referrerpolicy="strict-origin-when-cross-origin"
-				allowfullscreen
 			></iframe>
+			{#if custom}
+				{#if !started}
+					<!-- Until the first play our poster covers YouTube's start screen. On touch screens it lets taps through, so
+					     the middle starts the video in YouTube itself (iOS only allows that); the clear bands block its title and logo. -->
+					<div class="poster">
+						<Cover thumbs={thumbnails(video)} />
+						<span class="bigplay"><PlayIcon size={30} /></span>
+					</div>
+					{#if ready && !touch}
+						<!-- With a mouse we start through the API, so YouTube never sees the pointer and never shows its UI. -->
+						<button class="shield inset-0 cursor-pointer" aria-label="Play" onclick={toggle}></button>
+					{:else}
+						<div class="shield top-0 h-[24%]"></div>
+						<div class="shield bottom-0 h-[22%]"></div>
+					{/if}
+				{:else}
+					<button class="shield inset-0 cursor-pointer" aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
+						{#if ended}
+							<Cover thumbs={thumbnails(video)} />
+						{/if}
+						{#if !playing}
+							<span class="absolute inset-0 flex items-center justify-center bg-black/55">
+								<span class="bigplay"><PlayIcon size={30} /></span>
+							</span>
+						{/if}
+					</button>
+					{#if ready}
+						<div class="controls" class:playing>
+							<button class="main" aria-label={playing ? 'Pause' : 'Play'} onclick={toggle}>
+								{#if playing}
+									<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16" rx="1.5" /><rect x="14" y="4" width="4" height="16" rx="1.5" /></svg>
+								{:else}
+									<PlayIcon size={18} />
+								{/if}
+							</button>
+							<span class="time tabular-nums">{fmt(time)} / {fmt(duration)}</span>
+							<input
+								type="range"
+								class="seek"
+								aria-label="Position"
+								min="0"
+								max={duration || 1}
+								step="1"
+								value={time}
+								style:--p="{duration ? (time / duration) * 100 : 0}%"
+								oninput={(e) => seek(+e.currentTarget.value)}
+							/>
+							<button class="icon" aria-label={muted ? 'Unmute' : 'Mute'} onclick={toggleMute}>
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+									<path d="M4 9h3l5-4v14l-5-4H4z" fill="currentColor" />
+									{#if muted}<path d="M16 9l5 6M21 9l-5 6" />{:else}<path d="M16 8.5a5 5 0 010 7M18.5 6a8.5 8.5 0 010 12" />{/if}
+								</svg>
+							</button>
+							{#if canFullscreen}
+								<button class="icon" aria-label={fullscreen ? 'Exit full screen' : 'Full screen'} onclick={toggleFullscreen}>
+									<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+										{#if fullscreen}<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />{:else}<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />{/if}
+									</svg>
+								</button>
+							{/if}
+						</div>
+					{/if}
+				{/if}
+			{/if}
 		{:else}
 			<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html svg}</svg>
 			<div class="absolute inset-0 flex flex-col items-center justify-center gap-4 text-stone">

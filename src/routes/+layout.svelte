@@ -1,5 +1,6 @@
 <script lang="ts">
 	import './layout.css';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { LayoutProps } from './$types';
 
@@ -11,6 +12,22 @@
 		['/courses', 'Courses'],
 		['/community', 'Community']
 	];
+	// The clicked thumbnail grows into the video player (and back): both carry the view-transition name "video".
+	const thumbFor = (path?: string) =>
+		path ? document.querySelector<HTMLElement>(`a[href="${path}"].feature, a[href="${path}"] .thumb`) : null;
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+		return new Promise((resolve) => {
+			const out = thumbFor(navigation.to?.url.pathname);
+			out?.style.setProperty('view-transition-name', 'video');
+			document.startViewTransition(async () => {
+				out?.style.removeProperty('view-transition-name');
+				resolve();
+				await navigation.complete;
+				thumbFor(navigation.from?.url.pathname)?.style.setProperty('view-transition-name', 'video');
+			}).finished.finally(() => thumbFor(navigation.from?.url.pathname)?.style.removeProperty('view-transition-name'));
+		});
+	});
 	const current = (href: string) => ((href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href)) ? 'page' : undefined);
 </script>
 
