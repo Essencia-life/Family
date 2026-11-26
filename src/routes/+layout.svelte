@@ -55,10 +55,10 @@
 				>
 			</nav>
 		{:else}
-			<nav class="flex items-center gap-6">
+			<nav class="flex items-center gap-4 whitespace-nowrap md:gap-6">
 				<a href="/#pricing" class="nav-link hidden md:inline">Membership</a>
 				<a href="/login?callbackUrl=/" class="nav-link">Log in</a>
-				<a href="/#pricing" class="btn btn-amber btn-sm">Join the Family</a>
+				<a href="/#pricing" class="btn btn-amber btn-sm">Join<span class="hidden sm:inline"> the Family</span></a>
 			</nav>
 		{/if}
 	</div>
