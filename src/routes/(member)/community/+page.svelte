@@ -85,7 +85,7 @@
 			<div class="rail wide">
 				{#each live.recordings as s (s.id)}
 					<a href="/live/{s.id}" class="card">
-						<Thumb colors={ART.Meditation.colors} svg={ART.Meditation.svg}>
+						<Thumb colors={ART.Meditation.colors} svg={ART.Meditation.svg} video={s}>
 							<span class="chip on-img">Live</span><span class="play"><PlayIcon /></span>
 						</Thumb>
 						<p class="meta">{date(s.starts_at)} · {s.minutes} min · with {s.host}</p>
@@ -99,7 +99,7 @@
 		<div class="grid gap-5 md:grid-cols-3">
 			{#each recordings as r (r.slug)}
 				<a href="/community/recordings/{r.slug}" class="card">
-					<Thumb colors={ART.Forum.colors} svg={ART.Forum.svg}>
+					<Thumb colors={ART.Forum.colors} svg={ART.Forum.svg} video={r}>
 						<span class="chip on-img">Forum</span><span class="play"><PlayIcon /></span>
 					</Thumb>
 					<p class="meta">{date(r.recorded_on)} · {r.minutes} min</p>

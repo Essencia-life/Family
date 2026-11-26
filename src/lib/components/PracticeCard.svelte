@@ -3,13 +3,13 @@
 	import PlayIcon from './PlayIcon.svelte';
 	import Thumb from './Thumb.svelte';
 
-	type Practice = { week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean };
+	type Practice = { week: number; type: string; title: string; teacher: string; minutes: number; practised?: boolean; video_provider?: string; video_id?: string | null };
 	let { practice: p, locked = false }: { practice: Practice; locked?: boolean } = $props();
 	const art = $derived(ART[p.type] ?? ART.Yoga);
 </script>
 
 <a href={locked ? '/#pricing' : `/practice/${p.week}`} class="card">
-	<Thumb colors={art.colors} svg={art.svg} portrait>
+	<Thumb colors={art.colors} svg={art.svg} video={p} portrait>
 		<span class="chip on-img">{p.type}</span>
 		<span class="wk-num">{p.week}</span>
 		{#if locked}

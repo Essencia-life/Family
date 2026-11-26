@@ -38,14 +38,20 @@ export const getPractice = query(v.pipe(v.number(), v.integer()), async (week) =
 export const getCourses = query(async () => {
 	const member = await requireMember();
 	const [courses, progress] = await Promise.all([
-		db.from('courses').select('slug, title, blurb, level, duration, colors, creator, lessons(id)').order('position'),
+		db
+			.from('courses')
+			.select('slug, title, blurb, level, duration, colors, creator, lessons(id, position, video_provider, video_id)')
+			.order('position')
+			.order('position', { referencedTable: 'lessons' }),
 		db.from('lesson_progress').select('lesson_id').eq('user_id', member.id)
 	]);
 	const done = new Set(must(progress).map((p) => p.lesson_id));
 	return must(courses).map(({ lessons, ...c }) => ({
 		...c,
 		lessonCount: lessons.length,
-		doneCount: lessons.filter((l) => done.has(l.id)).length
+		doneCount: lessons.filter((l) => done.has(l.id)).length,
+		// The card shows the first lesson that has a video.
+		video: lessons.find((l) => l.video_id) ?? null
 	}));
 });
 
