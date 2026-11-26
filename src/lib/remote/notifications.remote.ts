@@ -9,7 +9,7 @@ export const getNotifications = query(async () => {
 	const seen = must(await db.from('notifications_seen').select('seen_at').eq('user_id', member.id).maybeSingle());
 	const since = seen?.seen_at ?? new Date(Date.now() - 14 * 864e5).toISOString();
 	const [practices, courses, recordings, threads, replies] = await Promise.all([
-		db.from('practices').select('type').gt('created_at', since),
+		db.from('practices').select('title').gt('created_at', since),
 		db.from('courses').select('title').gt('created_at', since),
 		db.from('recordings').select('title').gt('created_at', since),
 		db.from('threads').select('id').gt('created_at', since).neq('author_id', member.id),

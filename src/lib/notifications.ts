@@ -1,6 +1,6 @@
 // Groups what is new since the member last opened the bell into one line per kind. Shared by server and browser.
 export type News = {
-	practices: { type: string }[];
+	practices: { title: string }[];
 	courses: { title: string }[];
 	recordings: { title: string }[];
 	/** New posts by other members. */
@@ -21,12 +21,11 @@ export function groupNews(news: News): NewsItem[] {
 		const who = names.length === 1 ? names[0] : `${names[0]} and ${names.length - 1} other${names.length > 2 ? 's' : ''}`;
 		items.push({ key: `reply-${thread}`, text: `${who} replied to your post “${replies[0].title}”`, href: '/community#exchange', count: replies.length });
 	}
-	for (const [type, list] of countBy(news.practices, (p) => p.type))
-		items.push({ key: `practice-${type}`, text: plural(list.length, `${type} practice`), href: '/practice', count: list.length });
 	const one = (key: string, list: { title: string }[], label: string, href: string) => {
 		if (list.length)
 			items.push({ key, text: list.length === 1 ? `New ${label}: ${list[0].title}` : plural(list.length, label), href, count: list.length });
 	};
+	one('practices', news.practices, 'morning practice', '/practice');
 	one('courses', news.courses, 'course', '/courses');
 	one('recordings', news.recordings, 'recording', '/community');
 	if (news.threads.length)

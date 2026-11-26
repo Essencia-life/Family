@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { groupNews } from './notifications';
 
 describe('groupNews', () => {
-	it('puts replies first, then one line per practice type, course, recording and exchange posts', () => {
+	it('puts replies first, then one line each for practices, courses, recordings and exchange posts', () => {
 		const items = groupNews({
-			practices: [{ type: 'Yoga' }, { type: 'Yoga' }, { type: 'Breathwork' }],
+			practices: [{ title: 'Sun' }, { title: 'Breath' }, { title: 'Flow' }],
 			courses: [{ title: 'Roots' }],
 			recordings: [{ title: 'A' }, { title: 'B' }],
 			threads: [{}, {}, {}],
@@ -16,8 +16,7 @@ describe('groupNews', () => {
 		});
 		expect(items.map((i) => i.text)).toEqual([
 			'Ana and 1 other replied to your post “Hello”',
-			'2 new Yoga practices',
-			'1 new Breathwork practice',
+			'3 new morning practices',
 			'New course: Roots',
 			'2 new recordings',
 			'3 new posts in the exchange'
