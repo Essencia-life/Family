@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { PRACTICE_TYPES } from '#lib/content.ts';
 	import PracticeCard from '#lib/components/PracticeCard.svelte';
-	import { getLibrary } from '#lib/remote/content.remote.ts';
+	import { getLibrary, getLiveSessions } from '#lib/remote/content.remote.ts';
 
-	const practices = $derived(await getLibrary());
+	// The next planned live practice leads the grid, then the library.
+	const practices = $derived([...(await getLiveSessions()).slice(0, 1), ...(await getLibrary())]);
 	let filter = $state<string>('All');
 	const shown = $derived(filter === 'All' ? practices : practices.filter((p) => p.type === filter));
 </script>
