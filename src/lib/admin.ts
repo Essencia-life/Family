@@ -104,6 +104,7 @@ export const RESOURCES: Record<string, Resource> = {
 		key: 'circle_on',
 		columns: ['circle_on', 'theme', 'starts_at'],
 		order: [{ column: 'circle_on', ascending: false }],
+		upcoming: { column: 'circle_on', label: 'Planned', restLabel: 'Past' },
 		fields: [
 			{ name: 'circle_on', label: 'New moon date', type: 'date', required: true, hint: 'Must match a new moon date shown on the community page.' },
 			{ name: 'theme', label: 'Theme', type: 'text', required: true },
