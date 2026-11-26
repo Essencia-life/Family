@@ -145,7 +145,9 @@ body::before {
 
 	/* feature card on home */
 	.feature { position: relative; overflow: hidden; border-radius: 34px 10px 34px 10px; min-height: 380px; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(1.6rem, 4vw, 3rem); color: var(--color-stone); border: 1px solid rgba(252, 250, 244, 0.14); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45); }
-	.feature::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8, 12, 9, 0.78), transparent 65%); }
+	/* Strong scrim bottom-left so the text stays readable on bright video thumbnails. */
+	.feature::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(8, 12, 9, 0.92), rgba(8, 12, 9, 0.55) 45%, transparent 80%), linear-gradient(to right, rgba(8, 12, 9, 0.5), transparent 70%); }
+	.feature { text-shadow: 0 1px 12px rgba(0, 0, 0, 0.55); }
 	.feature > *:not(svg):not(.cover) { position: relative; z-index: 2; }
 	.bigplay { width: 72px; height: 72px; border-radius: 50%; background: var(--color-stone); color: var(--color-forest); display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0; }
 	.bigplay::before { content: ''; position: absolute; inset: -9px; border-radius: 50%; border: 1px solid rgba(252, 250, 244, 0.5); animation: ping 2.4s ease-out infinite; }

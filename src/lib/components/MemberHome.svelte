@@ -45,7 +45,7 @@
 			<a href="/practice/{latest.id}" class="feature card" style={gradient(art.colors)}>
 				<svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice" aria-hidden="true">{@html art.svg}</svg>
 				<Cover thumbs={thumbnails(latest)} />
-				<span class="chip mb-3 self-start bg-stone/20! text-stone!">New · Week {latest.week} · {latest.type}</span>
+				<span class="chip mb-3 self-start bg-black/50! text-stone! backdrop-blur-sm">New · Week {latest.week} · {latest.type}</span>
 				<p class="display mb-2 text-4xl md:text-6xl">{latest.title}</p>
 				<p class="mb-6 text-stone/85">with {latest.teacher} · {latest.minutes} min</p>
 				<span class="flex items-center gap-4"><span class="bigplay"><PlayIcon size={26} /></span><span class="font-accent text-[1.3rem] italic">Begin practice</span></span>
