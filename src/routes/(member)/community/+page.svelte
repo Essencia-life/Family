@@ -69,7 +69,7 @@
 		<div class="grid gap-4 md:grid-cols-2">
 			{#each live.upcoming as s (s.id)}
 				<a href="/live/{s.id}" class="glass card flex items-center gap-5">
-					<span class="bigplay h-[56px]! w-[56px]!"><PlayIcon size={18} /></span>
+					<span class="flex h-[56px] w-[56px] shrink-0 items-center justify-center rounded-full bg-stone text-forest"><PlayIcon size={18} /></span>
 					<span>
 						<span class="meta mt-0! block">{formatSession(s.starts_at)}</span>
 						<span class="display block text-xl">{s.title}</span>

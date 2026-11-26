@@ -52,7 +52,7 @@
 		<div class="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#if nextLive}
 				<a href="/live/{nextLive.id}" class="glass card flex! items-center gap-5">
-					<span class="bigplay h-[68px]! w-[68px]!"><PlayIcon size={22} /></span>
+					<span class="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full bg-stone text-forest"><PlayIcon size={22} /></span>
 					<span>
 						<span class="meta mt-0! block">Next live session</span>
 						<span class="display block text-xl">{formatSession(nextLive.starts_at)}</span>
